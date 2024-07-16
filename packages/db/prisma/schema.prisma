@@ -1,0 +1,70 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id Int @id @default(autoincrement())
+  name String
+  phone String
+  email String @unique
+  password String
+  city String?
+  state String?
+  zip String?
+  bookings Booking[]
+}
+
+model Seat {
+  id Int @id @default(autoincrement())
+  row Int
+  col Int
+  audiId Int
+  audi Audi @relation(fields: [audiId], references: [id])
+  booked Boolean @default(false)
+  bookingId Int?
+  booking Booking? @relation(fields: [bookingId], references: [id])
+}
+
+model Movie {
+  id Int @id @default(autoincrement())
+  name String
+  languages String[]
+  certificate String
+  rating String
+  dates DateTime[]
+  cinemas Cinema[]
+}
+
+model Audi {
+  id Int @id @default(autoincrement())
+  name String
+  seats Seat[]
+  cinemaId Int
+  cinema Cinema @relation(fields: [cinemaId], references: [id])
+}
+
+model Cinema {
+  id Int @id @default(autoincrement())
+  name String
+  auditoriums Audi[]
+  movies Movie[]
+  city String
+  state String
+  zip String
+  bookings Booking[]
+}
+
+model Booking{
+  id Int @id @default(autoincrement())
+  cinemaId Int
+  cinema Cinema @relation(fields: [cinemaId], references: [id])
+  seats Seat[]
+  startTime DateTime
+  userId Int
+  user User @relation(fields: [userId], references: [id])
+}
