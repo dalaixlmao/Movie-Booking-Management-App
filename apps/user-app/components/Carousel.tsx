@@ -37,34 +37,34 @@ const Carousel = ({
   return (
     <div
       id="default-carousel"
-      className="md:border-0 border-2 relative md:w-screen h-4/5 w-4/5 md:h-screen bg-black md:p-0 pt-8"
+      className="md:border-0 border-2 border-white/10 rounded-lg relative md:w-screen h-4/5 py-3 w-4/5 md:h-screen bg-black md:p-0 pt-8"
       data-carousel="slide"
     >
       {/* Carousel wrapper */}
-      <div className="relative h-full overflow-hidden bg-black md:h-full">
+      <div className="relative h-full overflow-hidden bg-black">
         {movies.map((movie, index) => (
           <div
             key={index}
-            className={`duration-700 h-full w-full ease-in-out overflow-hidden ${
+            className={`duration-700 h-full w-full ease-in-out overflow-hidden shadow-inset-custom ${
               currentSlide === index ? "block" : "hidden"
             }`}
             data-carousel-item
+            style={{
+              backgroundImage: `url(${movie.poster || ""})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              backgroundRepeat: "no-repeat",
+            }}
           >
-            <img
-              src={movie.poster || ""}
-              className="size-full absolute block md:w-full md:h-auto w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
-              alt={`Slide ${index + 1}`}
-            />
-
-            <div className="absolute z-40 bottom-0 md:ml-48 md:mb-24 ">
-              <div className="text-red-500 font-black md:text-9xl hover:cursor-default">
+            <div className="absolute md:w-auto w-full left-1/2 md:left-0 transform -translate-x-1/2 md:translate-x-0 z-40 bottom-0 md:ml-48 md:mb-24 text-center flex flex-col items-center md:items-start ">
+              <div className="text-red-500 font-black text-2xl md:text-9xl hover:cursor-default">
                 {movie.name}
               </div>
-              <div className="text-white flex flex-row mt-6">
-                <div className="text-white hover:cursor-default bg-white/50 px-4 py-2 rounded-lg mt-3 text-white font-medium backdrop-blur-md flex flex-row justify-between items-center">
+              <div className="text-white flex flex-row items-center md:mt-6 mt-3">
+                <div className="hover:cursor-default bg-white/30 py-1 px-2 text-xs font-light md:px-4 md:py-2 rounded-lg md:mt-3 text-white md:font-medium md:backdrop-blur-md flex flex-row justify-between items-center">
                   Rating {movie.rating}/10 <Star />
                 </div>
-                <button className="text-white md:bg-white px-4 py-2 rounded-lg mt-3 md:text-black font-medium ml-3 hover:bg-white/80 hover:backdrop-blur-md">
+                <button className="border border-1 md:border-0 px-2 py-1 text-xs rounded-md bg-white md:px-4 md:py-2 md:rounded-lg md:mt-3 text-black md:font-medium ml-3 hover:bg-white/80 hover:backdrop-blur-md">
                   Book Now
                 </button>
               </div>
@@ -136,7 +136,7 @@ function Star() {
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
       fill="currentColor"
-      className="size-5 ml-1"
+      className="md:size-5 size-4 ml-1"
     >
       <path
         fillRule="evenodd"
