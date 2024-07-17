@@ -7,12 +7,17 @@ import { Providers } from "@/provider";
 import Appbar from "@/components/TempAppbar";
 import { Open_Sans } from "next/font/google";
 import { Poppins } from "next/font/google";
-
+import { RecoilRoot } from "recoil";
 
 const inter = Inter({ subsets: ["latin"] });
-const open_sans = Open_Sans({subsets:['latin'], weight:['300', '400', '500', '600', '700', '800']});
-const poppins = Poppins({subsets:['latin'], weight:['100','200','300', '400', '500', '600', '700', '800', '900']});
-
+const open_sans = Open_Sans({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700", "800"],
+});
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -26,11 +31,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <Providers>
-        <body className={`${open_sans.className}`}><Appbar />
-        <div className="h-screen z-1">{children}</div>
-        </body>
-      </Providers>
+        <Providers>
+          <body className={`${open_sans.className}`}>
+            <Appbar />
+            <div className="h-screen z-1">{children}</div>
+          </body>
+        </Providers>
     </html>
   );
 }

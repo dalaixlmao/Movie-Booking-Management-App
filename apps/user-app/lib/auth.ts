@@ -44,7 +44,7 @@ export const authOptions = {
         },
       }),
     ],
-    secret: process.env.JWT_SECRET || "",
+    secret: process.env.NEXTAUTH_URL || "",
     callbacks: {
         async session({token, session}:any){
             session.user.id = token.sub;

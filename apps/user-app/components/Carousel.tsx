@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 const Carousel = ({
   movies,
@@ -17,6 +19,7 @@ const Carousel = ({
 }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [poster, posterUrls] = useState([""]);
+  const router = useRouter();
   const slides = movies.map((elem) => {
     return elem.poster;
   });
@@ -64,7 +67,7 @@ const Carousel = ({
                 <div className="hover:cursor-default bg-white/30 py-1 px-2 text-xs font-light md:px-4 md:py-2 rounded-lg md:mt-3 text-white md:font-medium md:backdrop-blur-md flex flex-row justify-between items-center">
                   Rating {movie.rating}/10 <Star />
                 </div>
-                <button className="border border-1 md:border-0 px-2 py-1 text-xs rounded-md bg-white md:px-4 md:py-2 md:rounded-lg md:mt-3 text-black md:font-medium ml-3 hover:bg-white/80 hover:backdrop-blur-md">
+                <button onClick={()=>{console.log(movie.id);router.push('/booking/?id='+movie.id.toString())}} className="border border-1 md:border-0 px-2 py-1 text-xs rounded-md bg-white md:px-4 md:py-2 md:rounded-lg md:mt-3 text-black md:font-medium ml-3 hover:bg-white/80 hover:backdrop-blur-md">
                   Book Now
                 </button>
               </div>
