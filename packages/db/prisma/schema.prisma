@@ -38,6 +38,7 @@ model Movie {
   rating String
   dates DateTime[]
   cinemas Cinema[]
+  poster String?
 }
 
 model Audi {
