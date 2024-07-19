@@ -34,7 +34,7 @@ export default function RootLayout({
         <Providers>
           <body className={`${open_sans.className}`}>
             <Appbar />
-            <div className="h-screen z-1">{children}</div>
+            <div className="h-screen z-1 bg-black">{children}</div>
           </body>
         </Providers>
     </html>
