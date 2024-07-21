@@ -40,7 +40,7 @@ export default function CinemaList({
               {elem.timeSlots.map((slot) => {
                 const d = new Date(slot);
                 return (
-                  <div className="flex flex-row border px-5 py-3 text-xs rounded-md mr-3 text-green-400 cursor-pointer">
+                  <div key={d.getTime()} className="flex flex-row border px-5 py-3 text-xs rounded-md mr-3 text-green-400 cursor-pointer">
                     <div>{d.getHours()<10?"0":""}{d.getHours()}</div>
                     <div>:</div>
                     <div>{d.getMinutes()<10?"0":""}{d.getMinutes().toString()}</div>

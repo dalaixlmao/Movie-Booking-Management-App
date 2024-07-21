@@ -58,7 +58,6 @@ export default function BookingMovieDetail() {
         setMovie(mov);
         setLatestDate(minDate(mov.dates).toDateString());
       }
-      console.log(mov);
     }
 
     getMovie();
