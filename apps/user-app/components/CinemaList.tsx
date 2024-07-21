@@ -27,7 +27,6 @@ export default function CinemaList({
         currDate: currDate,
       });
       setCinemaSlots(response.data.cinema);
-      console.log(response.data.cinema);
     }
     f();
   }, [currDate]);
@@ -40,7 +39,6 @@ export default function CinemaList({
             <div className="flex flex-row w-3/4">
               {elem.timeSlots.map((slot) => {
                 const d = new Date(slot);
-                console.log('afasfas---------------------',d);
                 return (
                   <div className="flex flex-row border px-5 py-3 text-xs rounded-md mr-3 text-green-400 cursor-pointer">
                     <div>{d.getHours()<10?"0":""}{d.getHours()}</div>
