@@ -59,7 +59,7 @@ export default function DateScroll({
   return (
     <div className="flex flex-row items-center">
       <Left onClick={onClickLeft} />
-      <div className="w-1/4 flex flex-row overflow-x-hidden" ref={dateScroll}>
+      <div className="w-full md:w-1/4 flex flex-row overflow-x-hidden" ref={dateScroll}>
         {uniqueDate?.map((dateString) => {
           const date = new Date(dateString);
           const isCurrentDate = date.toDateString() === currDate.toDateString();
@@ -70,7 +70,7 @@ export default function DateScroll({
                 setCurrDate(date);
               }}
               className={
-                "mr-5 flex flex-col items-center cursor-default group px-2 py-1 " +
+                "mr-5 flex flex-col items-center cursor-default group px-4 py-1 " +
                 (isCurrentDate
                   ? "bg-red-500 rounded-md"
                   : "bg-transparent hover:text-red-400 font-medium")

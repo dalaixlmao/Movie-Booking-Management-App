@@ -73,10 +73,10 @@ export default function BookingMovieDetail() {
           backgroundRepeat: "no-repeat",
         }}
       >
-        <div className="bg-black/60 backdrop-saturate-0 py-1 h-full w-full backdrop-contrast-75">
-          <div className="flex flex-row">
+        <div className="md:bg-black/60 bg-black backdrop-saturate-0 py-1 h-full w-full md:backdrop-contrast-75">
+          <div className="flex md:flex-row flex-col w-full">
             <div
-              className="h-1/2 block w-48 pt-72  ml-36 my-5 rounded-xl"
+              className="md:h-1/2 block md:mx-0 h-full w-full md:w-48 pt-72 md:ml-36 md:my-5 rounded-xl"
               style={{
                 backgroundImage: `url(${movie.poster || ""})`,
                 backgroundSize: "cover",
@@ -84,12 +84,12 @@ export default function BookingMovieDetail() {
                 backgroundRepeat: "no-repeat",
               }}
             >
-              <div className="w-full bg-black text-white text-center text-sm font-light">
+              <div className="w-full bg-black text-white text-center border-b border-white/20 md:border-0 text-sm font-light">
                 In Cinemas
               </div>
             </div>
-            <div className="text-white flex flex-col justify-center ml-7">
-              <div className="font-bold text-4xl">{movie.name}</div>
+            <div className="text-white flex flex-col justify-center mx-4 my-2 md:ml-7">
+              <div className="font-bold text-xl md:text-4xl">{movie.name}</div>
               <div className="flex flex-row mt-2">
                 {movie.languages.map((lang) => {
                   return (
@@ -99,18 +99,19 @@ export default function BookingMovieDetail() {
                   );
                 })}
               </div>
-              <div className="text-sm font-light flex flex-row items-center items-center mt-2">
+              <div className="text-sm font-light md:text-md flex flex-row text-xs items-center mt-2">
                 {movie.certificate}{" "}
-                <div className="rounded-full h-1 w-1 bg-white ml-3"></div>
-                <div className="text-white ml-3">{latestDate}</div>
-                <div className="rounded-full h-1 w-1 bg-white ml-3"></div>
-                <div className="ml-3 flex flex-row items-center">{movie.rating}/10 <Star/></div>
+                <div className="rounded-full h-1 w-1 bg-white ml-2 block"></div>
+                <div className="text-white ml-2 md:text-md text-xs">{latestDate}</div>
+                <div className="rounded-full h-1 w-1 bg-white ml-2 text-xs block"></div>
+                <div className="ml-2 text-xs flex md:text-md flex-row items-center">{movie.rating}/10 <Star/></div>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
+    
   );
 }
 

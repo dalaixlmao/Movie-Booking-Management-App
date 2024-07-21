@@ -34,13 +34,13 @@ export default function CinemaList({
     <div className="">
       {cinemaSlots.map((elem, index) => {
         return (
-          <div key={index} className="w-full flex flex-row items-center justify-between border-b border-white/20 pb-5 px-6">
-            <div className="text-sm font-bold w-1/4">{elem.cinema ? elem.cinema.name+", "+elem.cinema.city+", "+elem.cinema.state : ""}</div>
-            <div className="flex flex-row w-3/4">
+          <div key={index} className="px-4 w-full flex flex-col md:flex-row items-center justify-between border-b border-white/20 pb-5 md:px-6">
+            <div className="text-sm font-bold w-full md:w-1/4">{elem.cinema ? elem.cinema.name+", "+elem.cinema.city+", "+elem.cinema.state : ""}</div>
+            <div className="flex flex-row w-full md:w-3/4">
               {elem.timeSlots.map((slot) => {
                 const d = new Date(slot);
                 return (
-                  <div key={d.getTime()} className="flex flex-row border px-5 py-3 text-xs rounded-md mr-3 text-green-400 cursor-pointer">
+                  <div key={d.getTime()} className="mt-2 md:mt-0 flex flex-row border px-5 py-3 text-xs rounded-md mr-3 text-green-400 cursor-pointer">
                     <div>{d.getHours()<10?"0":""}{d.getHours()}</div>
                     <div>:</div>
                     <div>{d.getMinutes()<10?"0":""}{d.getMinutes().toString()}</div>

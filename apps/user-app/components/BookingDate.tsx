@@ -76,7 +76,7 @@ export default function BookingDate() {
   return (
     <div className="w-full h-auto">
       <div className="border-b border-t border-white/20">
-        <div className="mx-36 py-5">
+        <div className="mx-2 md:mx-36 py-5">
           <DateScroll
             dates={movieSlots}
             setCurrDate={setCurrDate}
@@ -84,7 +84,7 @@ export default function BookingDate() {
           />
         </div>
       </div>
-      <div className="mx-36 pt-5 bg-white/10 pb-5">
+      <div className="md:mx-2 md:mx-36 pt-5 bg-white/10 pb-5">
         <CinemaList currDate={currDate} movieId={movieId} />
       </div>
     </div>
