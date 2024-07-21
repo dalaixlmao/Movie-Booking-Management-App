@@ -3,7 +3,7 @@ import { useSearchParams } from "next/navigation";
 import gettingMovie from "@/lib/actions/gettingMovie";
 import { useEffect, useState } from "react";
 import DateScroll from "./DateScroll";
-
+import CinemaList from "./CinemaList";
 
 type movie = {
   id: number;
@@ -22,12 +22,12 @@ type movie = {
   }[];
 };
 
-
-export default function BookingDate(){
-
-    const searchParam = useSearchParams();
+export default function BookingDate() {
+  const searchParam = useSearchParams();
   const movieId = Number(searchParam.get("id"));
   const [latestDate, setLatestDate] = useState("");
+  const [currDate, setCurrDate] = useState(new Date());
+  const [movieSlots, setMovieSlot] = useState([new Date]);
   const [movie, setMovie] = useState<movie>({
     id: -1,
     name: "",
@@ -55,9 +55,17 @@ export default function BookingDate(){
         });
         return dates[0];
       }
+      const d:Date[] = [];
+
       if (mov && typeof mov === "object" && "id" in mov) {
+        mov.slots.map((slot) => {
+          slot.slots.map((elem) => {
+            d.push(elem);
+          });
+        });
         setMovie(mov);
-        setLatestDate(minDate(mov.dates).toDateString());
+        setLatestDate(minDate(d).toDateString());
+        setMovieSlot(d);
       }
       console.log(mov);
     }
@@ -65,8 +73,20 @@ export default function BookingDate(){
     getMovie();
   }, []);
 
-
-    return <div className="border-b border-t border-white/10">
-       <div className="mx-36 py-5"><DateScroll dates={movie.dates}/></div> 
+  return (
+    <div className="w-full h-auto">
+      <div className="border-b border-t border-white/20">
+        <div className="mx-36 py-5">
+          <DateScroll
+            dates={movieSlots}
+            setCurrDate={setCurrDate}
+            currDate={currDate}
+          />
         </div>
+      </div>
+      <div className="mx-36 pt-5 bg-white/10 pb-5">
+        <CinemaList currDate={currDate} movieId={movieId} />
+      </div>
+    </div>
+  );
 }

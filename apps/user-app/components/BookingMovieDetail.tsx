@@ -94,7 +94,7 @@ export default function BookingMovieDetail() {
               <div className="flex flex-row mt-2">
                 {movie.languages.map((lang) => {
                   return (
-                    <div className="bg-white/70 text-black px-3 py-1 text-sm mr-2 rounded-md">
+                    <div key={lang} className="bg-white/70 text-black px-3 py-1 text-sm mr-2 rounded-md">
                       {lang}
                     </div>
                   );

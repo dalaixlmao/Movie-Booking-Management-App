@@ -19,6 +19,15 @@ model User {
   bookings Booking[]
 }
 
+model Slots{
+  id Int @id @default(autoincrement())
+  movieId Int
+  slots DateTime[]
+  audiId Int
+  movie Movie @relation(fields: [movieId], references: [id])
+  audi Audi @relation (fields: [audiId], references: [id])
+}
+
 model Seat {
   id Int @id @default(autoincrement())
   row Int
@@ -39,6 +48,7 @@ model Movie {
   dates DateTime[]
   cinemas Cinema[]
   poster String?
+  slots Slots[]
 }
 
 model Audi {
@@ -47,6 +57,7 @@ model Audi {
   seats Seat[]
   cinemaId Int
   cinema Cinema @relation(fields: [cinemaId], references: [id])
+  slots Slots[]
 }
 
 model Cinema {

@@ -22,7 +22,7 @@ async function main() {
     }
   }
 
-  const user1 = await createUser({
+ const user1 = await createUser({
     name: 'Alice',
     phone: '1234567890',
     email: 'alice@example.com',

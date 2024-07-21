@@ -24,7 +24,8 @@ export default async function gettingMovie(id: number) {
         cinemas:true,
         languages:true,
         rating:true,
-        poster:true
+        poster:true,
+        slots:true
     }
   });
   if (!movie) {
