@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from ".prisma/client";
+import { PrismaClient } from "@repo/db";
 const prisma = new PrismaClient();
 export async function GET(req: Request) {
   const body = await req.json();

@@ -37,6 +37,7 @@ model Seat {
   booked Boolean @default(false)
   bookingId Int?
   booking Booking? @relation(fields: [bookingId], references: [id])
+  price Int @default(0)
 }
 
 model Movie {
@@ -53,6 +54,8 @@ model Movie {
 
 model Audi {
   id Int @id @default(autoincrement())
+  rows Int @default(1)
+  cols Int @default(1)
   name String
   seats Seat[]
   cinemaId Int

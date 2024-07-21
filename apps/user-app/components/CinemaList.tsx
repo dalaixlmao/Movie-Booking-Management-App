@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import getttingCinema from "@/lib/actions/gettingCinema";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 export default function CinemaList({
   currDate,
   movieId,
@@ -9,6 +10,7 @@ export default function CinemaList({
   currDate: Date;
   movieId: number;
 }) {
+  const router = useRouter();
   const [cinemaSlots, setCinemaSlots] = useState<
     {
       cinema: {
@@ -40,7 +42,10 @@ export default function CinemaList({
               {elem.timeSlots.map((slot) => {
                 const d = new Date(slot);
                 return (
-                  <div key={d.getTime()} className="mt-2 md:mt-0 flex flex-row border px-5 py-3 text-xs rounded-md mr-3 text-green-400 cursor-pointer">
+                  <div onClick={()=>{
+                    router.push('/booking/slots/?cinemaId='+elem.cinema?.id.toString()+'&timeStamp='+d.getTime().toString())
+
+                  }}  key={d.getTime()} className="mt-2 md:mt-0 flex flex-row border px-5 py-3 text-xs rounded-md mr-3 text-green-400 cursor-pointer">
                     <div>{d.getHours()<10?"0":""}{d.getHours()}</div>
                     <div>:</div>
                     <div>{d.getMinutes()<10?"0":""}{d.getMinutes().toString()}</div>
