@@ -14,6 +14,7 @@ import totalSeatAmount from "@/lib/actions/totalSeatAmount";
 const lettr = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const p = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 export default function AuditoriumStructure() {
+  const [socket, setSocket] = useState<WebSocket | null>();
   const searchParam = useSearchParams();
   const movieId = Number(searchParam.get("cinemaId"));
   const timeStamp = Number(searchParam.get("timeStamp"));
@@ -31,6 +32,19 @@ export default function AuditoriumStructure() {
   }>();
   const [numberOfSeats, setNumberOfSeats] = useState(1);
   const [bookedSeats, setBookedSeats] = useState([-1]);
+
+  useEffect(() => {
+    const newScoket = new WebSocket("ws://localhost:8080");
+    newScoket.onopen = () => {
+      console.log("connection established");
+      newScoket.send("hello server");
+    };
+    newScoket.onmessage = (message) => {
+      console.log(message.data);
+    };
+    setSocket(newScoket);
+    return () => newScoket.close();
+  }, []);
 
   const [audi, setAudi] = useState<{
     id: number;
@@ -107,16 +121,20 @@ export default function AuditoriumStructure() {
                   onClick={onSeatClick}
                   seat={elem}
                   totalCols={audi.cols}
-                  isSelected={bookedSeats.includes(
-                    elem.id
-                  )}
+                  isSelected={bookedSeats.includes(elem.id)}
                 />
               </div>
             </div>
           );
         })}
       </div>
-      {(selectedSeat)?<div className="w-full absolute bottom-0 flex flex-col items-center bg-white/10 py-4"><PayingAmountButton amount={totalSeatAmount(bookedSeats, audi)}/></div>:<></>}
+      {selectedSeat ? (
+        <div className="w-full absolute bottom-0 flex flex-col items-center bg-white/10 py-4">
+          <PayingAmountButton amount={totalSeatAmount(bookedSeats, audi)} />
+        </div>
+      ) : (
+        <></>
+      )}
     </div>
   );
 }
