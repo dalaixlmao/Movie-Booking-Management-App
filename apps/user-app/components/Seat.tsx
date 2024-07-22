@@ -1,6 +1,10 @@
 export default function Seat({
-  seat, totalCols
+  onClick,
+  seat,
+  totalCols,
+  isSelected,
 }: {
+  onClick: () => void;
   seat: {
     id: number;
     row: number;
@@ -10,12 +14,17 @@ export default function Seat({
     bookingId: number | null;
     price: number;
   };
-  totalCols:number
+  totalCols: number;
+  isSelected: boolean;
 }) {
-
+  if(isSelected)
+    {console.log(seat, (seat.row - 1) * 20 + seat.col - 1);}
   return (
-    <div className="h-6 text-xs flex justify-center items-center w-6 rounded-sm border border-green-400/70 hover:bg-green-400/70 hover:font-semibold hover:text-black text-green-400/70">
-      {((seat.col-1)%totalCols)+1}
+    <div
+      onClick={onClick}
+      className={((isSelected)?"bg-red-400/70 font-semibold text-black ":"hover:bg-red-400 hover:font-semibold hover:text-black text-red-400/70 ")+"h-6 text-xs flex justify-center items-center w-6 rounded-sm border border-red-400/70 cursor-pointer"}
+    >
+      {seat.col}
     </div>
   );
 }
