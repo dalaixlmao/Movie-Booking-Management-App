@@ -1,6 +1,6 @@
 "use server";
 
-import { PrismaClient } from "@repo/db";
+import { PrismaClient } from "@repo/db/client";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth";
 import { error } from "console";

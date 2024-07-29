@@ -1,6 +1,6 @@
 'use server'
 
-import { PrismaClient } from "@repo/db";
+import { PrismaClient } from "@repo/db/client";
 import { date } from "zod";
 const prisma = new PrismaClient();
 

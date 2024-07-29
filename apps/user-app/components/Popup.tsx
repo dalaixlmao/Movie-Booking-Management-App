@@ -12,20 +12,24 @@ const vehicle = [
   <Bus />,
 ];
 
+type PopupProps = {
+  setPopupVisible: (visible: boolean) => void;
+  selectedSeats: number;
+  setSelectedSeats: (seats: number) => void;
+  setSeats: (seats: number) => void;
+};
+
 export default function Popup({
   setPopupVisible,
   selectedSeats,
   setSelectedSeats,
   setSeats,
-}: {
-  setPopupVisible: (a:number) => void;
-  selectedSeats: number;
-  setSelectedSeats: (a: number) => void;
-  setSeats: (a: number) => void;
-}) {
+}: 
+  PopupProps
+) {
   return (
     <div className="mt-48 absolute bg-black/80 w-screen h-screen flex justify-center items-center z-50">
-      <div className="px-8 py-5 bg-white/10 text-white backdrop-blur-md rounded-lg h-2/5 w-2/5 text-black flex-col flex items-center justify-around">
+      <div className="md:px-8 md:py-5 px-3 py-2 bg-white/10 text-white backdrop-blur-md rounded-lg h-2/5 w-full md:w-2/5 text-black flex-col flex items-center justify-around">
         <div className="">How many seats?</div>
         <div>{vehicle[selectedSeats - 1]}</div>
         <div className="flex-row flex justify-between w-full mb-4">
@@ -33,7 +37,7 @@ export default function Popup({
             return (
               <button
                 className={
-                  "h-10 w-10 rounded-full bg-" +
+                  "md:h-10 h-5 text-xs md:w-10 w-5 rounded-full bg-" +
                   (selectedSeats === e ? "red-500" : "white/50")
                 }
                 onClick={() => {
@@ -49,7 +53,8 @@ export default function Popup({
           <button
             onClick={() => {
               setSeats(selectedSeats);
-              setPopupVisible(0);
+              setPopupVisible(false);
+              console.log('button clicked..................')
             }}
             className="bg-red-500 rounded-lg w-full py-2"
           >

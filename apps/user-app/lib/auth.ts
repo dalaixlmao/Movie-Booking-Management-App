@@ -1,6 +1,6 @@
 import CredentialsProvider  from "next-auth/providers/credentials";
 import zod from 'zod';
-import { PrismaClient } from "@repo/db";
+import { PrismaClient } from "@repo/db/client";
 const prisma = new PrismaClient();
 
 

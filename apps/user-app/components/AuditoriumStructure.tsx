@@ -13,14 +13,13 @@ import totalSeatAmount from "@/lib/actions/totalSeatAmount";
 
 const lettr = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const p = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-export default function AuditoriumStructure() {
-  const [socket, setSocket] = useState<WebSocket | null>();
+export default function AuditoriumStructure({userId}:{userId:number}) {
   const searchParam = useSearchParams();
   const movieId = Number(searchParam.get("cinemaId"));
   const timeStamp = Number(searchParam.get("timeStamp"));
   const [tCols, setTCols] = useState<number>(0);
   const [seats, setSeats] = useState(0);
-  const [popupVisible, setPopupVisible] = useState(1);
+  const [popupVisible, setPopupVisible] = useState(true);
   const [selectedSeat, setSelectedSeat] = useState<{
     id: number;
     row: number;
@@ -32,20 +31,7 @@ export default function AuditoriumStructure() {
   }>();
   const [numberOfSeats, setNumberOfSeats] = useState(1);
   const [bookedSeats, setBookedSeats] = useState([-1]);
-
-  useEffect(() => {
-    const newScoket = new WebSocket("ws://localhost:8080");
-    newScoket.onopen = () => {
-      console.log("connection established");
-      newScoket.send("hello server");
-    };
-    newScoket.onmessage = (message) => {
-      console.log(message.data);
-    };
-    setSocket(newScoket);
-    return () => newScoket.close();
-  }, []);
-
+  const [buttonClicked, setButtonClicked] = useState(0);
   const [audi, setAudi] = useState<{
     id: number;
     rows: number;
@@ -61,6 +47,23 @@ export default function AuditoriumStructure() {
       price: number;
     }[];
   }>();
+
+
+  useEffect(()=>{
+    async function buttonCl(){
+      console.log('button CLicked-----------------------------------------')
+      const response = await axios.post('http://localhost:8080/',{
+        bookedSeats:bookedSeats,
+        userId:userId,
+        startTime:timeStamp,
+        cinemaId:movieId
+      })
+      console.log(response.data);
+
+    }
+    buttonCl();
+  },[buttonClicked]);
+
 
   useEffect(() => {
     async function getAudi() {
@@ -80,10 +83,7 @@ export default function AuditoriumStructure() {
     setBookedSeats(bookedSeats);
   }, [selectedSeat]);
 
-  function onSeatClick() {
-    console.log("seat clicked");
-    console.log(selectedSeat);
-  }
+  function onSeatClick() {}
   return (
     <div className="flex justify-center flex-col items-center w-full">
       {popupVisible ? (
@@ -101,18 +101,14 @@ export default function AuditoriumStructure() {
         <Screen />
       </div>
       <div
-        className={`gap-y-3 mt-7 grid grid-cols-[repeat(${audi?.cols.toString()},1fr)] gap-1`}
+        className={`md:gap-y-3 gap-0 mt-7 grid grid-cols-[repeat(${audi?.cols.toString()},1fr)]`}
       >
         {audi?.seats.map((elem, index) => {
-          console.log(
-            `gap grid grid-cols-[repeat(${audi?.cols}, minmax(0, 1fr))]`
-          );
           return (
-            <div key={index} className="flex flex-row justify-between">
-              <div className="mr-2 text-sm text-white/30">
-                {index % audi.cols == 0 ? lettr[index / audi.cols] : ""}
-              </div>
+            <div key={index} className="flex flex-row justify-between w-fit h-fit">
+                {index % audi.cols == 0 ? <div className="w-3 text-[8px] md:text-sm text-white/30">{lettr[index / audi.cols]}</div> :<div className="w-0 h-0"></div>}
               <div
+              className={(index%audi.cols==1)?"ml-1":""}
                 onClick={() => {
                   setSelectedSeat(elem);
                 }}
@@ -129,8 +125,11 @@ export default function AuditoriumStructure() {
         })}
       </div>
       {selectedSeat ? (
-        <div className="w-full absolute bottom-0 flex flex-col items-center bg-white/10 py-4">
-          <PayingAmountButton amount={totalSeatAmount(bookedSeats, audi)} />
+        <div className="absolute w-full bottom-0 flex flex-col items-center bg-white/10 py-4">
+          <PayingAmountButton
+            amount={totalSeatAmount(bookedSeats, audi) / 100}
+            onClick={()=>{setButtonClicked((p)=>p+1)}}
+          />
         </div>
       ) : (
         <></>

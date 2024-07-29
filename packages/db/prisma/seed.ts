@@ -2,7 +2,7 @@ import { PrismaClient, Prisma } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
-  async function createUser(data: { name: string, phone: string, email: string, password: string, city?: string, state?: string, zip?: string }) {
+  async function createUser(data: { name: string, balance:number, phone: string, email: string, password: string, city?: string, state?: string, zip?: string }) {
     try {
       const user = await prisma.user.create({
         data
@@ -29,7 +29,8 @@ async function main() {
     password: 'securepassword123',
     city: 'New York',
     state: 'NY',
-    zip: '10001'
+    zip: '10001',
+    balance: 100000,
   });
 
   const user2 = await createUser({
@@ -39,7 +40,8 @@ async function main() {
     password: 'securepassword456',
     city: 'Los Angeles',
     state: 'CA',
-    zip: '90001'
+    zip: '90001',
+    balance: 100000,
   });
 
   const cinema1 = await prisma.cinema.create({
@@ -74,7 +76,7 @@ async function main() {
     }
   });
 
-  async function createSeatsInBatches(seats: { row: number, col: number, audiId: number }[], batchSize: number) {
+  async function createSeatsInBatches(seats: { row: number, col: number, audiId: number, price:number }[], batchSize: number) {
     for (let i = 0; i < seats.length; i += batchSize) {
       const batch = seats.slice(i, i + batchSize);
       await prisma.seat.createMany({
@@ -89,7 +91,8 @@ async function main() {
       seats.push({
         row,
         col,
-        audiId: audi1.id
+        audiId: audi1.id,
+        price: 20000
       });
     }
   }
@@ -99,7 +102,8 @@ async function main() {
       seats.push({
         row,
         col,
-        audiId: audi2.id
+        audiId: audi2.id,
+        price: 30000
       });
     }
   }
@@ -113,20 +117,79 @@ async function main() {
       certificate: 'PG-13',
       rating: '8.8',
       dates: [new Date('2024-07-16'), new Date('2024-07-17')],
-      cinemas: { connect: [{ id: cinema1.id }, { id: cinema2.id }] }
+      cinemas: { connect: [{ id: cinema1.id }, { id: cinema2.id }] },
+      poster: 'https://lh3.googleusercontent.com/drive-viewer/AKGpihaqVe1huon-2hz7yWxAgbeMmu-JIEbCoAGad9a1ycZ2W1YdhDkf-_GxOoi4qPEoIckewtc-sWvxtd3r6kLkq6sLaptGzqfTfWI=s1600-rw-v1'
     }
   });
 
   const movie2 = await prisma.movie.create({
     data: {
-      name: 'The Matrix',
-      languages: ['English', 'Spanish'],
-      certificate: 'R',
-      rating: '8.7',
+      name: 'Demon Slayer',
+      languages: ['English', 'Japanese', 'Frensh', 'Spanish'],
+      certificate: 'PG-12',
+      rating: '8.6',
       dates: [new Date('2024-07-18'), new Date('2024-07-19')],
-      cinemas: { connect: [{ id: cinema1.id }] }
+      cinemas: { connect: [{ id: cinema1.id }] },
+      poster: 'https://lh3.googleusercontent.com/drive-viewer/AKGpihbcjJ55VUc0_dJg2eI75qZjmAXZM7gnBcNW_85C6xoSufXWXfImlmnU5b_xPilN0pLNcmTzK0D-Sv8S5o8LQXw5Im0rr5ERi3s=s1600-rw-v1'
     }
   });
+
+  // movieId Int
+  // slots DateTime[]
+  // audiId Int
+  // movie Movie @relation(fields: [movieId], references: [id])
+  // audi Audi @relation (fields: [audiId], references: [id])
+
+  function getRandomDateInRange(start: Date, end: Date): Date {
+    const startDate = start.getTime();
+    const endDate = end.getTime();
+    const randomTime = startDate + Math.random() * (endDate - startDate);
+    return new Date(randomTime);
+}
+
+function generateRandomDates(numDates: number, start: Date, end: Date): Date[] {
+    const dates: Date[] = [];
+    for (let i = 0; i < numDates; i++) {
+        dates.push(getRandomDateInRange(start, end));
+    }
+    return dates;
+}
+
+const startDate = new Date('2024-09-01T00:00:00Z');
+const endDate = new Date('2024-09-07T23:59:59Z');
+
+const randomDates = generateRandomDates(12, startDate, endDate);
+
+
+
+  const slots1= await prisma.slots.create({
+    data:{
+      movie:{ connect: { id: movie1.id } },
+      audi:{ connect: { id: audi1.id } },
+      slots: generateRandomDates(12, startDate, endDate)
+    }
+  })
+  const slots2= await prisma.slots.create({
+    data:{
+      movie:{ connect: { id: movie2.id } },
+      audi:{ connect: { id: audi1.id } },
+      slots: generateRandomDates(16, startDate, endDate)
+    }
+  })
+  const slots3= await prisma.slots.create({
+    data:{
+      movie:{ connect: { id: movie1.id } },
+      audi:{ connect: { id: audi2.id } },
+      slots: generateRandomDates(12, startDate, endDate)
+    }
+  })
+  const slots4= await prisma.slots.create({
+    data:{
+      movie:{ connect: { id: movie2.id } },
+      audi:{ connect: { id: audi2.id } },
+      slots: generateRandomDates(16, startDate, endDate)
+    }
+  })
 
   console.log({ user1, user2, cinema1, cinema2, audi1, audi2, movie1, movie2 });
 }

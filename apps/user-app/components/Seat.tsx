@@ -22,7 +22,7 @@ export default function Seat({
   return (
     <div
       onClick={onClick}
-      className={((isSelected)?"bg-red-400/70 font-semibold text-black ":"hover:bg-red-400 hover:font-semibold hover:text-black text-red-400/70 ")+"h-6 text-xs flex justify-center items-center w-6 rounded-sm border border-red-400/70 cursor-pointer"}
+      className={((isSelected)?"bg-red-400/70 font-semibold text-black ":"hover:bg-red-400 hover:font-semibold hover:text-black text-red-400/70 ")+"md:h-6 h-2 w-2  md:w-6 text-[9px] md:text-xs flex justify-center items-center rounded-sm border border-red-400/70 cursor-pointer"}
     >
       {seat.col}
     </div>

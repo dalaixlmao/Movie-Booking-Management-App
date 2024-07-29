@@ -17,6 +17,12 @@ model User {
   state String?
   zip String?
   bookings Booking[]
+  balance Int
+}
+
+model Bank{
+  id Int @id @default(autoincrement())
+  balance Int @default(10000000)
 }
 
 model Slots{

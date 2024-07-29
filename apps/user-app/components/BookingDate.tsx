@@ -84,7 +84,7 @@ export default function BookingDate() {
           />
         </div>
       </div>
-      <div className="md:mx-2 md:mx-36 pt-5 bg-white/10 pb-5">
+      <div className="md:mx-2 md:mx-36 bg-white/10 pb-5">
         <CinemaList currDate={currDate} movieId={movieId} />
       </div>
     </div>

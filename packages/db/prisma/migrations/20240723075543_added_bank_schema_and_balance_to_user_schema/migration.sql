@@ -1,0 +1,14 @@
+-- AlterTable
+ALTER TABLE "User" ADD COLUMN     "balance" INTEGER NOT NULL DEFAULT 0,
+ADD COLUMN     "bankId" INTEGER NOT NULL DEFAULT 1;
+
+-- CreateTable
+CREATE TABLE "Bank" (
+    "id" SERIAL NOT NULL,
+    "name" TEXT NOT NULL DEFAULT 'HDFC',
+
+    CONSTRAINT "Bank_pkey" PRIMARY KEY ("id")
+);
+
+-- AddForeignKey
+ALTER TABLE "User" ADD CONSTRAINT "User_bankId_fkey" FOREIGN KEY ("bankId") REFERENCES "Bank"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
