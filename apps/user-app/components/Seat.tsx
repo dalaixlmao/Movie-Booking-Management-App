@@ -19,6 +19,14 @@ export default function Seat({
 }) {
   if(isSelected)
     {console.log(seat, (seat.row - 1) * 20 + seat.col - 1);}
+  if(seat.booked)
+  {
+    return <div
+    className={"bg-white/20 font-semibold text-black md:h-6 h-2 w-2  md:w-6 text-[9px] md:text-xs flex justify-center items-center rounded-sm border border-white/20 cursor-default"}
+  >
+    {seat.col}
+  </div>
+  }
   return (
     <div
       onClick={onClick}
