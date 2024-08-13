@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@repo/db/client";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 const prisma = new PrismaClient();
 export async function GET(req: Request) {
   const body = await req.json();
@@ -14,6 +16,17 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
+  const session = await getServerSession(authOptions);
+
+  const userId = Number(session.user.id);
+
+  const c = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { city: true },
+  });
+
+  const city = c?.city || "";
+
   const body = await req.json();
   const movieId = body.movieId;
   const currDate: string = body.currDate;
@@ -21,13 +34,23 @@ export async function POST(req: Request) {
   const slots = await prisma.slots.findMany({
     where: {
       movieId: movieId,
+      audi: {
+        cinema: {
+          city: city,
+        },
+      },
     },
     select: {
       slots: true,
-      audi: true,
+      audi: {
+        select: {
+          cinema: true,
+        },
+      },
       audiId: true,
     },
   });
+  
 
   const obj: { audiId: number; timeSlots: Date[] }[] = [];
   const audi: number[] = [];
@@ -61,7 +84,7 @@ export async function POST(req: Request) {
 
       if (auditorium && auditorium.cinemaId) {
         const cine = await prisma.cinema.findUnique({
-          where: { id: auditorium.cinemaId },
+          where: { id: auditorium.cinemaId, city },
           select: {
             id: true,
             name: true,

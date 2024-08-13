@@ -14,6 +14,17 @@ export default async function gettingMovie(id: number) {
 //       message: "unauthenticated message",
 //     };
 //   }
+
+const session = await getServerSession(authOptions);
+const userId = Number(session.user.id);
+
+const c = await prisma.user.findUnique({
+  where:{id:userId},
+  select:{city:true}
+});
+
+const city = c?.city || "";
+
   const movie = await prisma.movie.findUnique({
     where: { id: id },
     select:{
@@ -21,7 +32,7 @@ export default async function gettingMovie(id: number) {
         id:true,
         dates:true,
         certificate:true,
-        cinemas:true,
+        cinemas:{where:{city:city}},
         languages:true,
         rating:true,
         poster:true,

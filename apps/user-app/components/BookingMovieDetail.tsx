@@ -27,6 +27,7 @@ export default function BookingMovieDetail() {
   const searchParam = useSearchParams();
   const movieId = Number(searchParam.get("id"));
   const [latestDate, setLatestDate] = useState("");
+  const [loader, setLoader] = useState(true);
   const [movie, setMovie] = useState<movie>({
     id: -1,
     name: "",
@@ -58,10 +59,22 @@ export default function BookingMovieDetail() {
         setMovie(mov);
         setLatestDate(minDate(mov.dates).toDateString());
       }
+      setLoader(false);
     }
 
     getMovie();
   }, []);
+  if(loader)
+  {
+    return <div role="status" className="mt-12 flex items-center justify-center h-1/4 w-full bg-white/40 rounded-lg animate-pulse dark:bg-white/10">
+        <svg className="w-10 h-96 text-white/10 dark:text-white/40" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 20">
+        <path d="M5 5V.13a2.96 2.96 0 0 0-1.293.749L.879 3.707A2.98 2.98 0 0 0 .13 5H5Z"/>
+        <path d="M14.066 0H7v5a2 2 0 0 1-2 2H0v11a1.97 1.97 0 0 0 1.934 2h12.132A1.97 1.97 0 0 0 16 18V2a1.97 1.97 0 0 0-1.934-2ZM9 13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2Zm4 .382a1 1 0 0 1-1.447.894L10 13v-2l1.553-1.276a1 1 0 0 1 1.447.894v2.764Z"/>
+      </svg>
+        <span className="sr-only">Loading...</span>
+    </div>
+    
+  }
   return (
     <div className="pt-12">
       <div
@@ -93,7 +106,10 @@ export default function BookingMovieDetail() {
               <div className="flex flex-row mt-2">
                 {movie.languages.map((lang) => {
                   return (
-                    <div key={lang} className="bg-white/70 text-black px-3 py-1 text-sm mr-2 rounded-md">
+                    <div
+                      key={lang}
+                      className="bg-white/70 text-black px-3 py-1 text-sm mr-2 rounded-md"
+                    >
                       {lang}
                     </div>
                   );
@@ -102,19 +118,21 @@ export default function BookingMovieDetail() {
               <div className="text-sm font-light md:text-md flex flex-row text-xs items-center mt-2">
                 {movie.certificate}{" "}
                 <div className="rounded-full h-1 w-1 bg-white ml-2 block"></div>
-                <div className="text-white ml-2 md:text-md text-xs">{latestDate}</div>
+                <div className="text-white ml-2 md:text-md text-xs">
+                  {latestDate}
+                </div>
                 <div className="rounded-full h-1 w-1 bg-white ml-2 text-xs block"></div>
-                <div className="ml-2 text-xs flex md:text-md flex-row items-center">{movie.rating}/10 <Star/></div>
+                <div className="ml-2 text-xs flex md:text-md flex-row items-center">
+                  {movie.rating}/10 <Star />
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    
   );
 }
-
 
 function Star() {
   return (

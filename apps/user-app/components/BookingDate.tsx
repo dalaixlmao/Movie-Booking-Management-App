@@ -4,7 +4,9 @@ import gettingMovie from "@/lib/actions/gettingMovie";
 import { useEffect, useState } from "react";
 import DateScroll from "./DateScroll";
 import CinemaList from "./CinemaList";
-
+import { SetStateAction } from "react";
+import { Dispatch } from "react";
+import CircularLoader from "./CircularLoader";
 type movie = {
   id: number;
   name: string;
@@ -27,7 +29,8 @@ export default function BookingDate() {
   const movieId = Number(searchParam.get("id"));
   const [latestDate, setLatestDate] = useState("");
   const [currDate, setCurrDate] = useState(new Date());
-  const [movieSlots, setMovieSlot] = useState([new Date]);
+  const [loader, setLoader] = useState(true);
+  const [movieSlots, setMovieSlot] = useState([new Date()]);
   const [movie, setMovie] = useState<movie>({
     id: -1,
     name: "",
@@ -55,7 +58,7 @@ export default function BookingDate() {
         });
         return dates[0];
       }
-      const d:Date[] = [];
+      const d: Date[] = [];
 
       if (mov && typeof mov === "object" && "id" in mov) {
         mov.slots.map((slot) => {
@@ -68,10 +71,14 @@ export default function BookingDate() {
         setMovieSlot(d);
       }
       console.log(mov);
+      setLoader(false);
     }
 
     getMovie();
   }, []);
+  if(loader){
+    return <div className="flex pt-24 w-full justify-center items-center"><CircularLoader size={'10'}/></div>
+  }
 
   return (
     <div className="w-full h-auto">

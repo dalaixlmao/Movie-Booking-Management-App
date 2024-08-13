@@ -24,6 +24,7 @@ export default function CinemaList({
 }) {
   const router = useRouter();
   const [cinemaSlots, setCinemaSlots] = useState<CinemaSlot[]>([]);
+  const [loader, setLoader] = useState(true);
 
   useEffect(() => {
     const fetchCinemaSlots = async () => {
@@ -33,6 +34,7 @@ export default function CinemaList({
           currDate: currDate,
         });
         setCinemaSlots(response.data.cinema || []);
+        setLoader(false);
       } catch (error) {
         console.error("Failed to fetch cinema slots", error);
       }
@@ -46,6 +48,12 @@ export default function CinemaList({
     const minutes = date.getMinutes();
     return `${hours < 10 ? "0" : ""}${hours}:${minutes < 10 ? "0" : ""}${minutes}`;
   };
+
+  if(loader)
+  {
+    return <div role="status" className="animate-pulse">
+    <div className="h-full bg-white/20 dark:bg-white/10 w-full py-5"></div></div>
+  }
 
   return (
     <div className="">

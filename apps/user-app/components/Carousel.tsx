@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { redirect } from "next/navigation";
 import { useRouter } from "next/navigation";
+import CircularLoader from "./CircularLoader";
 
 const Carousel = ({
   movies,
@@ -20,6 +21,8 @@ const Carousel = ({
   const [currentSlide, setCurrentSlide] = useState(0);
   const [poster, posterUrls] = useState([""]);
   const router = useRouter();
+  const [loading, setLoading] = useState(true);
+  const [bookLoader, setBookLoader] = useState(false);
   const slides = movies.map((elem) => {
     return elem.poster;
   });
@@ -34,8 +37,13 @@ const Carousel = ({
 
   useEffect(() => {
     const interval = setInterval(nextSlide, 5000);
-    return () => clearInterval(interval);
+    return () => {clearInterval(interval); setLoading(false)};
   }, []);
+
+  if(loading)
+    return <div className="mt-12 text-white">
+      Loading...
+    </div>
 
   return (
     <div
@@ -67,8 +75,8 @@ const Carousel = ({
                 <div className="hover:cursor-default bg-white/30 py-1 px-2 text-xs font-light md:px-4 md:py-2 rounded-lg md:mt-3 text-white md:font-medium md:backdrop-blur-md flex flex-row justify-between items-center">
                   Rating {movie.rating}/10 <Star />
                 </div>
-                <button onClick={()=>{console.log(movie.id);router.push('/booking/?id='+movie.id.toString())}} className="border border-1 md:border-0 px-2 py-1 text-xs rounded-md bg-white md:px-4 md:py-2 md:rounded-lg md:mt-3 text-black md:font-medium ml-3 hover:bg-white/80 hover:backdrop-blur-md">
-                  Book Now
+                <button onClick={()=>{console.log(movie.id);router.push('/booking/?id='+movie.id.toString()); setBookLoader(true)}} className={(bookLoader?" bg-white/60 backdrop-blur-md pointer-default":"" )+" flex flex-col items-center justify-center w-24 h-6 md:h-10 border border-1 md:border-0 px-2 py-1 text-xs rounded-md bg-white md:px-4 md:py-2 md:rounded-lg md:mt-3 text-black md:font-medium ml-3 hover:bg-white/60 hover:backdrop-blur-md"}>
+                 {!bookLoader?"Book Now":<CircularLoader size={'4'}/>}
                 </button>
               </div>
             </div>
