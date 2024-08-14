@@ -86,10 +86,10 @@ export default function AuditoriumStructure({ userId }: { userId: number }) {
         timeStamp: timeStamp,
       });
       setAudi(res.data.audi);
+      setTCols((audi ? audi.cols : 0) + 1);
       const audiId = res.data.audi.id;
       const p = await getSeat(audiId);
       setBookSeats(p);
-      setTCols((audi ? audi.cols : 0) + 1);
       setLoader(false);
     }
     getAudi();
@@ -99,82 +99,75 @@ export default function AuditoriumStructure({ userId }: { userId: number }) {
     const bookedSeats = selectTheSeats(audi, selectedSeat, numberOfSeats);
     console.log(bookedSeats);
     setBookedSeats(bookedSeats);
-  }, [selectedSeat]);
+  }, [selectedSeat, audi, numberOfSeats]);
 
   function onSeatClick() {}
-  if (loader) {
+  if (loader || !audi) {
     return (
       <div className="w-full text-white h-full mt-36 flex justify-center items-center">
         <CircularLoader size="10" />
       </div>
     );
   }
+
+  const seatWidth = 100 / audi.cols;
+
+
   return (
     <div className="flex justify-center flex-col items-center w-full">
-      {popupVisible ? (
+      {popupVisible && (
         <Popup
           setPopupVisible={setPopupVisible}
-          setSeats={setSeats}
+          setSeats={setNumberOfSeats}
           selectedSeats={numberOfSeats}
           setSelectedSeats={setNumberOfSeats}
         />
-      ) : (
-        <></>
       )}
+
       <div className="mt-7 text-xs font-light text-center">
         <div className="mb-2">All eyes here please!</div>
         <Screen />
       </div>
 
-      {audi ? (
-        <div
-          className={`md:gap-y-3 gap-0 mt-7 grid grid-cols-[repeat(${audi?.cols.toString()},1fr)]`}
-        >
-          {bookSeats?.map((elem, index) => {
-            return (
-              <div
-                key={index}
-                className="flex flex-row justify-between w-fit h-fit"
-              >
-                {index % (audi ? audi.cols : -1) == 0 ? (
-                  <div className="w-3 text-[8px] md:text-sm text-white/30">
-                    {lettr[index / (audi ? audi.cols : -1)]}
-                  </div>
-                ) : (
-                  <div className="w-0 h-0"></div>
-                )}
-                <div
-                  className={index % (audi ? audi.cols : -1) == 1 ? "ml-1" : ""}
-                  onClick={() => {
-                    if (!elem.booked) setSelectedSeat(elem);
-                  }}
-                >
-                  <Seat
-                    onClick={onSeatClick}
-                    seat={elem}
-                    totalCols={audi ? audi.cols : -1}
-                    isSelected={bookedSeats.includes(elem.id)}
-                  />
-                </div>
+      <div className="mt-7 flex flex-wrap">
+        {bookSeats?.map((elem, index) => (
+          <div
+            key={index}
+            className="flex flex-row justify-center w-fit h-fit items-center my-2"
+            style={{ width: `${seatWidth.toString()}%` }}
+          >
+            {index % audi.cols === 0 && (
+              <div className="w-3 text-[8px] md:text-sm text-white/30">
+                {lettr[Math.floor(index / audi.cols)]}
               </div>
-            );
-          })}
-        </div>
-      ) : (
-        <></>
-      )}
-      {selectedSeat ? (
+            )}
+            <div
+              className={index % audi.cols === 1 ? "ml-1" : ""}
+              onClick={() => {
+                if (!elem.booked) setSelectedSeat(elem);
+              }}
+            >
+              <Seat
+                onClick={onSeatClick}
+                seat={elem}
+                totalCols={audi.cols}
+                isSelected={bookedSeats.includes(elem.id)}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {selectedSeat && (
         <div className="absolute w-full bottom-0 flex flex-col items-center bg-white/10 py-4">
           <PayingAmountButton
             loader={buttonLoader}
             amount={totalSeatAmount(bookedSeats, audi) / 100}
             onClick={() => {
-              setButtonClicked((p) => p + 1);
+              setButtonClicked((prev) => prev + 1);
             }}
           />
         </div>
-      ) : (
-        <></>
       )}
     </div>
   );

@@ -4,7 +4,6 @@ import "./globals.css";
 import { SessionProvider } from "next-auth/react";
 import { Providers } from "@/provider";
 // import Appbar from '@repo/ui/appbar'
-import Appbar from "@/components/TempAppbar";
 import { Open_Sans } from "next/font/google";
 import { Poppins } from "next/font/google";
 import { RecoilRoot } from "recoil";
@@ -33,7 +32,6 @@ export default function RootLayout({
     <html lang="en">
         <Providers>
           <body className={`${open_sans.className}`}>
-            <Appbar />
             <div className="h-screen z-1 bg-black overflow-y-auto">{children}</div>
           </body>
         </Providers>

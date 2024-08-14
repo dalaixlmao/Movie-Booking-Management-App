@@ -21,15 +21,14 @@ export default function LocationDropdown() {
           setOpen(!open);
         }}
       >
-        Location <Down />{" "}
+        {city==""?"Select City": city} <Down />{" "}
       </div>
       {open ? (
         <div className="w-48 flex flex-col items-center my-2 bg-black/60 backdrop-blur-lg absolute rounded-md border-white/20 border">
-          <input className="bg-black/60 w-4/5 mt-3 border-white/20 border rounded-md" />
           <div className="w-full flex flex-col items-start text-left ml-[50px] mt-3 mb-3">
           {locations ? (
-            locations?.map((elem) => {
-              return <div onClick={()=>{changeLocation(elem); setCity(elem);}}  className="w-4/5 text-left hover:bg-white/60 py-1 px-3 ">{elem}</div>;
+            locations?.map((elem, index) => {
+              return <div key={index} onClick={()=>{changeLocation(elem); setCity(elem);}}  className="w-4/5 text-left hover:bg-white/60 py-1 px-3 ">{elem}</div>;
             })
           ) : (
             <></>

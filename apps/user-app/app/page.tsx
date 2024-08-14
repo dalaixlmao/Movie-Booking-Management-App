@@ -8,6 +8,6 @@ export default async function Home() {
   if (session?.user) {
     redirect("/dashboard");
   } else {
-    redirect("/api/auth/signin");
+    redirect("/signin");
   }
 }
