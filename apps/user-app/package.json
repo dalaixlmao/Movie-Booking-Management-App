@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "dbSetup": "cd ../../ && cd packages/db && npm install && npx prisma generate && cd ../../ && npm install && cd apps/user-app",
-    "build": "next build",
+    "build": "npm run dbSetup && next build",
     "start": "next start",
     "lint": "next lint"
   },
