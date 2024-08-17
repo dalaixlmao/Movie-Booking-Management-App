@@ -1,15 +1,5 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "pipeline": {
-    "build": {
-      "dependsOn": ["^build"],
-      "outputs": ["dist/**", "build/**", ".next/**"]
-    },
-    "deploy": {
-      "dependsOn": ["build"],
-      "outputs": []
-    }
-  },
   "tasks": {
     "build": {
       "dependsOn": ["^build", "^db:generate"],
