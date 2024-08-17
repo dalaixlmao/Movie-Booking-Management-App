@@ -30,7 +30,15 @@ export default async function getttingCinema(
     },
   });
 
-  const cinemas = audi.map(async (a) => {
+  const cinemas = audi.map(async (a:{
+    audi: {
+        id: number;
+        rows: number;
+        cols: number;
+        name: string;
+        cinemaId: number;
+    };
+}) => {
     const cine = await prisma.cinema.findMany({
       where:{city:city},
       select: {
