@@ -61,7 +61,12 @@ export default function BookingDate() {
       const d: Date[] = [];
 
       if (mov && typeof mov === "object" && "id" in mov) {
-        mov.slots.map((slot) => {
+        mov.slots.map((slot:{
+          id: number;
+          movieId: number;
+          slots: Date[];
+          audiId: number;
+      }) => {
           slot.slots.map((elem) => {
             d.push(elem);
           });
