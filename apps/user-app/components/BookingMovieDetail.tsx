@@ -63,7 +63,7 @@ export default function BookingMovieDetail() {
     }
 
     getMovie();
-  }, []);
+  }, [movieId]);
   if(loader)
   {
     return <div role="status" className="mt-12 flex items-center justify-center h-1/4 w-full bg-white/40 rounded-lg animate-pulse dark:bg-white/10">

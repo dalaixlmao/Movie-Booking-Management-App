@@ -38,7 +38,7 @@ const Carousel = ({
   useEffect(() => {
     const interval = setInterval(nextSlide, 5000);
     return () => {clearInterval(interval); setLoading(false)};
-  }, []);
+  }, [nextSlide, loading, clearInterval]);
 
   if(loading)
     return <div className="mt-12 text-white">

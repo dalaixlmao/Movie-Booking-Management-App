@@ -14,18 +14,20 @@ export default function SignInPage() {
       <div className="w-full md:w-1/3 bg-white/10 flex flex-col items-center py-3 rounded-lg px-10">
         <div className="text-3xl font-bold mb-2">Sign In</div>
         <div className="text-xs text-white/50 mb-3">
-          Don't have an accout?{" "}
+          Don&apos;t have an accout?{" "}
           <a className="underline hover:text-white" href="/signup">
             Create account.
           </a>
         </div>
         <InputBox
+        key={"email"}
           type={"email"}
           placeholder="john@abc.com"
           label="Email"
           setValue={setEmail}
         />
         <InputBox
+        key={"email"}
           type="password"
           placeholder="password"
           label="Password"

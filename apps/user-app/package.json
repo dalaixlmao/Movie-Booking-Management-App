@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "cd ../../ && cd packages/db && npm install && npx prisma generate && cd ../../ && npm install && cd apps/user-app && next build",
+    "dbSetup": "cd ../../ && cd packages/db && npm install && npx prisma generate && cd ../../ && npm install && cd apps/user-app",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },

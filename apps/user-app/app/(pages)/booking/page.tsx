@@ -1,14 +1,14 @@
-"use client";
 import BookingMovieDetail from "@/components/BookingMovieDetail";
 import BookingDate from "@/components/BookingDate";
-import { useState } from "react";
+import { Suspense } from "react";
 
 export default function Booking() {
-
   return (
     <div className="text-white">
-      <BookingMovieDetail />
-      <BookingDate />
+      <Suspense fallback={<div>Loading...</div>}>
+        <BookingMovieDetail />
+        <BookingDate />
+      </Suspense>
     </div>
   );
 }

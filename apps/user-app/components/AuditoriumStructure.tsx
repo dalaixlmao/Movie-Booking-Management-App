@@ -67,7 +67,7 @@ export default function AuditoriumStructure({ userId }: { userId: number }) {
       setButtonLoader(true);
     }
     async function buttonCl() {
-      const response = await axios.post(process.env.EXPRESS_SERVER_URL || "http://localhost:8000", {
+      const response = await axios.post(process.env.EXPRESS_SERVER_URL || "https://my-app.zapto.org", {
         bookedSeats: bookedSeats,
         userId: userId,
         startTime: timeStamp,

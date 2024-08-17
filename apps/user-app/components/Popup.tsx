@@ -1,17 +1,16 @@
 const p = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 const vehicle = [
-  <Cycle />,
-  <Scooter />,
-  <Rickshaw />,
-  <Rickshaw />,
-  <Car />,
-  <Car />,
-  <Car />,
-  <Bus />,
-  <Bus />,
-  <Bus />,
+  <Cycle key="cycle" />,
+  <Scooter key="scooter" />,
+  <Rickshaw key="rickshaw-1" />,
+  <Rickshaw key="rickshaw-2" />,
+  <Car key="car-1" />,
+  <Car key="car-2" />,
+  <Car key="car-3" />,
+  <Bus key="bus-1" />,
+  <Bus key="bus-2" />,
+  <Bus key="bus-3" />,
 ];
-
 type PopupProps = {
   setPopupVisible: (visible: boolean) => void;
   selectedSeats: number;
@@ -33,9 +32,10 @@ export default function Popup({
         <div className="">How many seats?</div>
         <div>{vehicle[selectedSeats - 1]}</div>
         <div className="flex-row flex justify-between w-full mb-4">
-          {p.map((e) => {
+          {p.map((e, index) => {
             return (
               <button
+              key={index}
                 className={
                   "md:h-10 h-5 text-xs md:w-10 w-5 rounded-full bg-" +
                   (selectedSeats === e ? "red-500" : "white/50")

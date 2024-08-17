@@ -75,7 +75,7 @@ export default function BookingDate() {
     }
 
     getMovie();
-  }, []);
+  }, [movieId]);
   if(loader){
     return <div className="flex pt-24 w-full justify-center items-center"><CircularLoader size={'10'}/></div>
   }
