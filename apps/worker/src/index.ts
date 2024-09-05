@@ -16,9 +16,7 @@ async function startTransaction(
   cinemaId: number
 ) {
   await prisma.$transaction(async (tx) => {
-    // Ensure the table name and schema match your database
     await tx.$queryRaw`SELECT * FROM "User" WHERE "id"=${Number(userId)} FOR UPDATE`;
-
     const user = await tx.user.findUnique({
       where: { id: userId },
       select: {
@@ -28,15 +26,12 @@ async function startTransaction(
     if (!user) {
       throw new Error("Invalid User Session");
     }
-
     const balance = user.balance;
     if (balance < amount) {
       throw new Error("Insufficient Funds");
     }
-
     const bank = await tx.bank.findMany({});
     const movieBookingBank = bank[0];
-
     try {
       const b1 = await tx.user.update({
         where: { id: userId },
@@ -46,7 +41,6 @@ async function startTransaction(
           },
         },
       });
-
       const bb = await tx.bank.update({
         where: { id: movieBookingBank.id },
         data: { balance: { increment: amount } },
@@ -58,14 +52,9 @@ async function startTransaction(
           data: { booked: true },
         });
       }
-
-      // Ensure all seat updates are within the transaction
       for (const id of seats) {
         await bookSeat(id);
       }
-
-      // Creating the booking
-
       console.log("Transaction successful");
     } catch (e) {
       throw new Error("Invalid data provided: " + e);
