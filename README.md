@@ -15,6 +15,9 @@ This is a full-stack movie booking application built using the Turborepo monorep
 
 - **Seat Matrix**  
   ![Seat Matrix](https://github.com/dalaixlmao/Movie-Booking-Management-App/blob/main/screenshots/SeatMatrix.png)
+  
+- **Payment Processing by worker of queue**
+  ![Payment processing by worker of queue](https://github.com/dalaixlmao/Movie-Booking-Management-App/blob/main/screenshots/SeatMatrix.png)
 
 ## Tech Stack
 
