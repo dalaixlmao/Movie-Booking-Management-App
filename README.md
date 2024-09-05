@@ -5,25 +5,22 @@ This is a full-stack movie booking application built using the Turborepo monorep
 ## Demo Screenshots
 
 - **Home Page**  
-  ![Home Page](#)(./screenshots/home.png)
+  ![Home Page](#)(https://github.com/dalaixlmao/Movie-Booking-Management-App/blob/main/screenshots/home.png)
 
 - **Slot Selection**  
-  ![Slot Selection](#)(./screenshots/cinemaListAndSlot.png)
+  ![Slot Selection](#)(https://github.com/dalaixlmao/Movie-Booking-Management-App/blob/main/screenshots/cinemaListAndSlot.png)
 
 - **Number of seats**  
-  ![Number of seats](#)(./screenshots/chooseNumberOfSeats.png)
+  ![Number of seats](#)(https://github.com/dalaixlmao/Movie-Booking-Management-App/blob/main/screenshots/chooseNumberOfSeats.png)
 
-- **Payment Processing**  
-  ![Payment Processing](#)(./screenshots/SeatMatrix.png)
+- **Seat Matrix**  
+  ![Seat Matrix](#)(https://github.com/dalaixlmao/Movie-Booking-Management-App/blob/main/screenshots/SeatMatrix.png)
 
 ## Tech Stack
 
-- **Frontend**: Next.js, TailwindCSS
-- **Backend**: Node.js, Express.js
+- **User-app**: Next.js, TailwindCSS
 - **Database**: PostgreSQL (with Prisma ORM)
 - **Queue System**: Redis (for managing seat booking transactions)
-- **Deployment**: AWS, Vercel
-- **CI/CD**: GitHub Actions
 - **Authentication**: NextAuth (for login/signup)
 
 ---
