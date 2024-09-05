@@ -1,82 +1,87 @@
-# Turborepo starter
+# Movie Booking App
 
-This is an official starter Turborepo.
+This is a full-stack movie booking application built using the Turborepo monorepo structure. It allows users to search for available movies, select time slots, book seats, and make payments. The app consists of two services: a Next.js `user-app` and an Express.js-based `queue-app` using Redis messaging queues for handling seat booking transactions.
 
-## Using this example
+## Demo Screenshots
 
-Run the following command:
+- **Home Page**  
+  ![Home Page](#) (./screenshots/home.png)
 
-```sh
-npx create-turbo@latest
-```
+- **Slot Selection**  
+  ![Slot Selection](#) (./screenshots/cinemaListAndSlot.png)
 
-## What's inside?
+- **Number of seats**  
+  ![Number of seats](#) (./screenshots/chooseNumberOfSeats.png)
 
-This Turborepo includes the following packages/apps:
+- **Payment Processing**  
+  ![Payment Processing](#) (./screenshots/SeatMatrix.png)
 
-### Apps and Packages
+## Tech Stack
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+- **Frontend**: Next.js, TailwindCSS
+- **Backend**: Node.js, Express.js
+- **Database**: PostgreSQL (with Prisma ORM)
+- **Queue System**: Redis (for managing seat booking transactions)
+- **Deployment**: AWS, Vercel
+- **CI/CD**: GitHub Actions
+- **Authentication**: NextAuth (for login/signup)
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+---
 
-### Utilities
+## System Design Flow
 
-This Turborepo has some additional tools already setup for you:
+1. **User Login/Signup**  
+   - The user registers or logs in using NextAuth, which handles authentication.
+   - Upon successful login, the user can browse movies available in their location.
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+2. **Movie Selection and Cinema Viewing**  
+   - Users can select a movie to see the list of cinemas and available time slots.
+   - After selecting a cinema and time slot, they proceed to seat selection.
 
-### Build
+3. **Seat Selection and Payment**  
+   - Users select the number of seats and then choose from the available seats in the auditorium's seat matrix.
+   - Upon confirming the seat selection, they proceed to the payment process.
 
-To build all apps and packages, run the following command:
+4. **Payment Queue Handling**  
+   - When a user clicks "Pay", the request is added to a Redis queue handled by the `queue-app`.
+   - The worker service processes each booking sequentially from the queue to ensure no seat clashes occur.
+   - After processing, payment is confirmed, and the seats are booked in the PostgreSQL database using Prisma ORM, ensuring ACID compliance.
 
-```
-cd my-turborepo
-pnpm build
-```
+---
 
-### Develop
+## Folder Structure
 
-To develop all apps and packages, run the following command:
+```bash
+├── apps
+│   ├── user-app     
+│   │   ├── app     
+│   │   │    ├── (pages)
+│   │   │    │    ├── booking
+│   │   │    │    └── dashboard
+│   │   │    ├── api
+│   │   │    │    ├── auth
+│   │   │    │    │    └── [...nextauth]
+│   │   │    │    └── booking
+│   │   │    │         └── slots
+│   │   │    ├── signin
+│   │   │    └── signup
+│   │   ├── components
+│   │   └── libs
+│   │        └── actions
+│   ├── exporess-server    
+│   ├── └── src
+│   └── worker    
+│       └── src          
+├── packages
+│   ├── db           
+│   ├── eslint-config   
+│   └── typescript-config 
+├── .github          
+└── turbo.json
 
-```
-cd my-turborepo
-pnpm dev
-```
-
-### Remote Caching
-
-Turborepo can use a technique known as [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup), then enter the following commands:
-
-```
-cd my-turborepo
-npx turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```
-npx turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turbo.build/repo/docs/core-concepts/monorepos/running-tasks)
-- [Caching](https://turbo.build/repo/docs/core-concepts/caching)
-- [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching)
-- [Filtering](https://turbo.build/repo/docs/core-concepts/monorepos/filtering)
-- [Configuration Options](https://turbo.build/repo/docs/reference/configuration)
-- [CLI Usage](https://turbo.build/repo/docs/reference/command-line-reference)
-# Movie-Booking-Management-App
+Features
+Authentication: User signup and login handled via NextAuth.
+Movie Selection: Browse movies, see available cinemas, and choose time slots.
+Seat Selection: Select seats from the seat matrix in real-time.
+Payment Queue: Ensures transactional integrity with Redis messaging queue and worker system to avoid seat booking clashes.
+ACID Compliance: Prisma ORM with PostgreSQL ensures atomic, consistent, isolated, and durable transactions during seat booking.
