@@ -1,82 +1,123 @@
-# Turborepo starter
+# Movie Booking App
 
-This is an official starter Turborepo.
+This is a full-stack movie booking application built using the Turborepo monorepo structure. It allows users to search for available movies, select time slots, book seats, and make payments. The app consists of two services: a Next.js `user-app` and an Express.js-based `queue-app` using Redis messaging queues for handling seat booking transactions.
 
-## Using this example
+## Demo Screenshots
 
-Run the following command:
+- **Home Page**  
+  ![Home Page](https://github.com/dalaixlmao/Movie-Booking-Management-App/blob/main/screenshots/home.png)
 
-```sh
-npx create-turbo@latest
+- **Slot Selection**  
+  ![Slot Selection](https://github.com/dalaixlmao/Movie-Booking-Management-App/blob/main/screenshots/cinemaListAndSlot.png)
+
+- **Number of seats**  
+  ![Number of seats](https://github.com/dalaixlmao/Movie-Booking-Management-App/blob/main/screenshots/chooseNumberOfSeats.png)
+
+- **Seat Matrix**  
+  ![Seat Matrix](https://github.com/dalaixlmao/Movie-Booking-Management-App/blob/main/screenshots/SeatMatrix.png)
+
+## Tech Stack
+
+- **User-app**: Next.js, TailwindCSS
+- **Database**: PostgreSQL (with Prisma ORM)
+- **Queue System**: Redis (for managing seat booking transactions)
+- **Authentication**: NextAuth (for login/signup)
+
+---
+
+## System Design Flow
+
+1. **User Login/Signup**  
+   - The user registers or logs in using NextAuth, which handles authentication.
+   - Upon successful login, the user can browse movies available in their location.
+
+2. **Movie Selection and Cinema Viewing**  
+   - Users can select a movie to see the list of cinemas and available time slots.
+   - After selecting a cinema and time slot, they proceed to seat selection.
+
+3. **Seat Selection and Payment**  
+   - Users select the number of seats and then choose from the available seats in the auditorium's seat matrix.
+   - Upon confirming the seat selection, they proceed to the payment process.
+
+4. **Payment Queue Handling**  
+   - When a user clicks "Pay", the request is added to a Redis queue handled by the `queue-app`.
+   - The worker service processes each booking sequentially from the queue to ensure no seat clashes occur.
+   - After processing, payment is confirmed, and the seats are booked in the PostgreSQL database using Prisma ORM, ensuring ACID compliance.
+
+---
+
+## Folder Structure
+
+```bash
+├── apps
+│   ├── user-app     
+│   │   ├── app     
+│   │   │    ├── (pages)
+│   │   │    │    ├── booking
+│   │   │    │    └── dashboard
+│   │   │    ├── api
+│   │   │    │    ├── auth
+│   │   │    │    │    └── [...nextauth]
+│   │   │    │    └── booking
+│   │   │    │         └── slots
+│   │   │    ├── signin
+│   │   │    └── signup
+│   │   ├── components
+│   │   └── libs
+│   │        └── actions
+│   ├── exporess-server    
+│   │   └── src
+│   └── worker    
+│       └── src          
+├── packages
+│   ├── db           
+│   ├── eslint-config   
+│   └── typescript-config 
+├── .github          
+└── turbo.json
+```
+## Features
+  - Authentication: User signup and login handled via NextAuth.
+  - Movie Selection: Browse movies, see available cinemas, and choose time slots.
+  - Seat Selection: Select seats from the seat matrix in real-time.
+  - Payment Queue: Ensures transactional integrity with Redis messaging queue and worker system to avoid seat booking clashes.
+  - ACID Compliance: Prisma ORM with PostgreSQL ensures atomic, consistent, isolated, and durable transactions during seat booking.
+## How to Run Locally
+  - Prerequisites
+  - Node.js
+  - Redis server
+  - PostgreSQL database
+  - Prisma ORM (installed globally)
+
+## Installation
+1. Clone the repository:
+  ```bash
+  git clone https://dalaixlmao/Movie-Booking-Management-App.git
+  cd Movie-Booking-Management-App
+  ```
+2. Install dependencies:
+  ```bash
+  npm install
+  ```
+
+3. Database setup:
+- Update the .env file with your PostgreSQL credentials.
+- Run Prisma migrations:
+```bash
+npx prisma migrate dev
+```
+- Run Prisma generation:
+```bash
+npx prisma generate
 ```
 
-## What's inside?
-
-This Turborepo includes the following packages/apps:
-
-### Apps and Packages
-
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
+4. Run Redis server:
+```bash
+docker run --name redis-server -p 6379:6379 -d redis
 ```
-cd my-turborepo
-pnpm build
+Run the apps:
+```bash
+#From root folder
+npm run dev
 ```
 
-### Develop
-
-To develop all apps and packages, run the following command:
-
-```
-cd my-turborepo
-pnpm dev
-```
-
-### Remote Caching
-
-Turborepo can use a technique known as [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup), then enter the following commands:
-
-```
-cd my-turborepo
-npx turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```
-npx turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turbo.build/repo/docs/core-concepts/monorepos/running-tasks)
-- [Caching](https://turbo.build/repo/docs/core-concepts/caching)
-- [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching)
-- [Filtering](https://turbo.build/repo/docs/core-concepts/monorepos/filtering)
-- [Configuration Options](https://turbo.build/repo/docs/reference/configuration)
-- [CLI Usage](https://turbo.build/repo/docs/reference/command-line-reference)
-# Movie-Booking-Management-App
