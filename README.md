@@ -5,16 +5,16 @@ This is a full-stack movie booking application built using the Turborepo monorep
 ## Demo Screenshots
 
 - **Home Page**  
-  ![Home Page](#) (./screenshots/home.png)
+  ![Home Page](#)(./screenshots/home.png)
 
 - **Slot Selection**  
-  ![Slot Selection](#) (./screenshots/cinemaListAndSlot.png)
+  ![Slot Selection](#)(./screenshots/cinemaListAndSlot.png)
 
 - **Number of seats**  
-  ![Number of seats](#) (./screenshots/chooseNumberOfSeats.png)
+  ![Number of seats](#)(./screenshots/chooseNumberOfSeats.png)
 
 - **Payment Processing**  
-  ![Payment Processing](#) (./screenshots/SeatMatrix.png)
+  ![Payment Processing](#)(./screenshots/SeatMatrix.png)
 
 ## Tech Stack
 
@@ -78,10 +78,49 @@ This is a full-stack movie booking application built using the Turborepo monorep
 │   └── typescript-config 
 ├── .github          
 └── turbo.json
+```
+## Features
+  - Authentication: User signup and login handled via NextAuth.
+  - Movie Selection: Browse movies, see available cinemas, and choose time slots.
+  - Seat Selection: Select seats from the seat matrix in real-time.
+  - Payment Queue: Ensures transactional integrity with Redis messaging queue and worker system to avoid seat booking clashes.
+  - ACID Compliance: Prisma ORM with PostgreSQL ensures atomic, consistent, isolated, and durable transactions during seat booking.
+## How to Run Locally
+  - Prerequisites
+  - Node.js
+  - Redis server
+  - PostgreSQL database
+  - Prisma ORM (installed globally)
 
-Features
-Authentication: User signup and login handled via NextAuth.
-Movie Selection: Browse movies, see available cinemas, and choose time slots.
-Seat Selection: Select seats from the seat matrix in real-time.
-Payment Queue: Ensures transactional integrity with Redis messaging queue and worker system to avoid seat booking clashes.
-ACID Compliance: Prisma ORM with PostgreSQL ensures atomic, consistent, isolated, and durable transactions during seat booking.
+## Installation
+1. Clone the repository:
+  ```bash
+  git clone https://dalaixlmao/Movie-Booking-Management-App.git
+  cd Movie-Booking-Management-App
+  ```
+2. Install dependencies:
+  ```bash
+  npm install
+  ```
+
+3. Database setup:
+- Update the .env file with your PostgreSQL credentials.
+- Run Prisma migrations:
+```bash
+npx prisma migrate dev
+```
+- Run Prisma generation:
+```bash
+npx prisma generate
+```
+
+4. Run Redis server:
+```bash
+docker run --name redis-server -p 6379:6379 -d redis
+```
+Run the apps:
+```bash
+#From root folder
+npm run dev
+```
+
