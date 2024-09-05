@@ -66,7 +66,7 @@ This is a full-stack movie booking application built using the Turborepo monorep
 │   │   └── libs
 │   │        └── actions
 │   ├── exporess-server    
-│   ├── └── src
+│   │   └── src
 │   └── worker    
 │       └── src          
 ├── packages
