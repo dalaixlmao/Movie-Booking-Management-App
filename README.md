@@ -5,16 +5,16 @@ This is a full-stack movie booking application built using the Turborepo monorep
 ## Demo Screenshots
 
 - **Home Page**  
-  ![Home Page](#)(https://github.com/dalaixlmao/Movie-Booking-Management-App/blob/main/screenshots/home.png)
+  ![Home Page](https://github.com/dalaixlmao/Movie-Booking-Management-App/blob/main/screenshots/home.png)
 
 - **Slot Selection**  
-  ![Slot Selection](#)(https://github.com/dalaixlmao/Movie-Booking-Management-App/blob/main/screenshots/cinemaListAndSlot.png)
+  ![Slot Selection](https://github.com/dalaixlmao/Movie-Booking-Management-App/blob/main/screenshots/cinemaListAndSlot.png)
 
 - **Number of seats**  
-  ![Number of seats](#)(https://github.com/dalaixlmao/Movie-Booking-Management-App/blob/main/screenshots/chooseNumberOfSeats.png)
+  ![Number of seats](https://github.com/dalaixlmao/Movie-Booking-Management-App/blob/main/screenshots/chooseNumberOfSeats.png)
 
 - **Seat Matrix**  
-  ![Seat Matrix](#)(https://github.com/dalaixlmao/Movie-Booking-Management-App/blob/main/screenshots/SeatMatrix.png)
+  ![Seat Matrix](https://github.com/dalaixlmao/Movie-Booking-Management-App/blob/main/screenshots/SeatMatrix.png)
 
 ## Tech Stack
 
