@@ -16,24 +16,44 @@ async function startTransaction(
   cinemaId: number
 ) {
   await prisma.$transaction(async (tx) => {
-    await tx.$queryRaw`SELECT * FROM "User" WHERE "id"=${Number(userId)} FOR UPDATE`;
+    for (const seatId of seats) {
+      await tx.$queryRaw`SELECT * FROM "Seat" WHERE "id" = ${seatId} FOR UPDATE`;
+    }
+    const seatStatuses = await tx.seat.findMany({
+      where: {
+        id: { in: seats },
+      },
+      select: {
+        id: true,
+        booked: true,
+      },
+    });
+
+    const unavailableSeats = seatStatuses.filter(seat => seat.booked);
+    if (unavailableSeats.length > 0) {
+      throw new Error(`Seats ${unavailableSeats.map(seat => seat.id).join(', ')} are already booked`);
+    }
     const user = await tx.user.findUnique({
       where: { id: userId },
       select: {
         balance: true,
       },
     });
+
     if (!user) {
       throw new Error("Invalid User Session");
     }
+
     const balance = user.balance;
     if (balance < amount) {
       throw new Error("Insufficient Funds");
     }
+
     const bank = await tx.bank.findMany({});
     const movieBookingBank = bank[0];
+
     try {
-      const b1 = await tx.user.update({
+      await tx.user.update({
         where: { id: userId },
         data: {
           balance: {
@@ -41,20 +61,17 @@ async function startTransaction(
           },
         },
       });
-      const bb = await tx.bank.update({
+      await tx.bank.update({
         where: { id: movieBookingBank.id },
         data: { balance: { increment: amount } },
       });
-
-      async function bookSeat(id: number) {
+      for (const id of seats) {
         await tx.seat.update({
           where: { id: id },
           data: { booked: true },
         });
       }
-      for (const id of seats) {
-        await bookSeat(id);
-      }
+
       console.log("Transaction successful");
     } catch (e) {
       throw new Error("Invalid data provided: " + e);
@@ -75,8 +92,6 @@ async function createBookings(
       cinemaId: cinemaId,
     },
   });
-
-  // Connect seats to the booking
   for (const id of seats) {
     const seat = await prisma.seat.update({
       where: { id: id },
