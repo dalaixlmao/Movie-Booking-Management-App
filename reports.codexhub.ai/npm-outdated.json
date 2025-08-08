@@ -1,0 +1,7 @@
+{
+  "axios": {
+    "wanted": "1.11.0",
+    "latest": "1.11.0",
+    "dependent": "repo"
+  }
+}

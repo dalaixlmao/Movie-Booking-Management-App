@@ -1,0 +1,14 @@
+movie-booking-app@ /tmp/repo
++-- UNMET DEPENDENCY @repo/db@file:/tmp/repo/packages/db
++-- UNMET DEPENDENCY @repo/eslint-config@file:/tmp/repo/packages/eslint-config
++-- UNMET DEPENDENCY @repo/store@file:/tmp/repo/packages/store
++-- UNMET DEPENDENCY @repo/typescript-config@file:/tmp/repo/packages/typescript-config
++-- UNMET DEPENDENCY @repo/ui@file:/tmp/repo/packages/ui
++-- UNMET DEPENDENCY axios@^1.7.2
++-- UNMET DEPENDENCY express-server@file:/tmp/repo/apps/express-server
++-- UNMET DEPENDENCY prettier@^3.2.5
++-- UNMET DEPENDENCY turbo@^2.0.6
++-- UNMET DEPENDENCY typescript@^5.4.5
++-- UNMET DEPENDENCY user-app@file:/tmp/repo/apps/user-app
+`-- UNMET DEPENDENCY worker@file:/tmp/repo/apps/worker
+
