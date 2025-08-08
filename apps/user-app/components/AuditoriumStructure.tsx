@@ -15,8 +15,7 @@
 import Seat from "./Seat";
 import { useSearchParams } from "next/navigation";
 import axios from "axios";
-import { useEffect } from "react";
-import { useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Popup from "./Popup";
 import selectTheSeats from "@/lib/actions/selectTheSeats";
 import PayingAmountButton from "./PayingAmountButton";
@@ -25,132 +24,135 @@ import getSeat from "@/lib/actions/getSeat";
 import CircularLoader from "./CircularLoader";
 
 /** Alphabet letters used for row labels */
-const lettr = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const ROW_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+// Type definitions
+type SeatType = {
+  id: number;
+  row: number;
+  col: number;
+  audiId: number;
+  booked: boolean;
+  bookingId: number | null;
+  price: number;
+};
+
+type AudiType = {
+  id: number;
+  rows: number;
+  cols: number;
+  name: string;
+  seats: SeatType[];
+};
 
 export default function AuditoriumStructure({ userId }: { userId: number }) {
-  // Get cinema and timestamp from URL parameters
+  // Get cinema and timestamp from URL parameters - memoized to prevent recalculation
   const searchParam = useSearchParams();
-  const movieId = Number(searchParam.get("cinemaId"));
-  const timeStamp = Number(searchParam.get("timeStamp"));
+  const movieId = useMemo(() => Number(searchParam.get("cinemaId")), [searchParam]);
+  const timeStamp = useMemo(() => Number(searchParam.get("timeStamp")), [searchParam]);
   
   // State for managing auditorium display and seat selection
-  const [tCols, setTCols] = useState<number>(0);
-  const [seats, setSeats] = useState(0);
   const [loader, setLoader] = useState(true);
-  
-  // Type definition for seat object
-  type SeatType = {
-    id: number;
-    row: number;
-    col: number;
-    audiId: number;
-    booked: boolean;
-    bookingId: number | null;
-    price: number;
-  };
-  
-  // State for storing all seats in the auditorium
   const [bookSeats, setBookSeats] = useState<SeatType[]>();
-  // UI state management
-  const [popupVisible, setPopupVisible] = useState(true); // Controls the seat quantity selection popup
-  const [selectedSeat, setSelectedSeat] = useState<SeatType>(); // The first seat selected by the user
-  const [numberOfSeats, setNumberOfSeats] = useState(1); // Number of seats to book
-  const [bookedSeats, setBookedSeats] = useState([-1]); // Array of seat IDs to be booked
-  const [buttonClicked, setButtonClicked] = useState(0); // Counter for payment button clicks
-  const [buttonLoader, setButtonLoader] = useState(false); // Loading state for payment button
-  
-  // Auditorium data state
-  type AudiType = {
-    id: number;
-    rows: number;
-    cols: number;
-    name: string;
-    seats: SeatType[];
-  };
-  
+  const [popupVisible, setPopupVisible] = useState(true);
+  const [selectedSeat, setSelectedSeat] = useState<SeatType>();
+  const [numberOfSeats, setNumberOfSeats] = useState(1);
+  const [bookedSeats, setBookedSeats] = useState<number[]>([]);
+  const [buttonClicked, setButtonClicked] = useState(0);
+  const [buttonLoader, setButtonLoader] = useState(false);
   const [audi, setAudi] = useState<AudiType>();
 
   /**
-   * Effect for handling payment button clicks
-   * When the button is clicked, send booking request to Express server
+   * Fetches auditorium and seat data
+   * Memoized to prevent unnecessary refetches
    */
-  useEffect(() => {
-    if (buttonClicked != 0) {
-      setButtonLoader(true);
+  const fetchAuditoriumData = useCallback(async () => {
+    try {
+      // Fetch auditorium data based on cinema and time selection
+      const res = await axios.post("/api/booking/slots", {
+        movieId,
+        timeStamp,
+      });
       
-      // Function to send booking request to Express server
-      async function sendBookingRequest() {
-        try {
-          const response = await axios.post(process.env.EXPRESS_SERVER_URL || "http://localhost:8080", {
-            bookedSeats: bookedSeats,
-            userId: userId,
-            startTime: timeStamp,
-            cinemaId: movieId,
-          });
-          
-          // Request added to queue successfully
-          console.log("Booking request added to queue:", response.data);
-        } catch (error) {
-          console.error("Error sending booking request:", error);
-        } finally {
-          setButtonLoader(false);
-        }
-      }
-
-      sendBookingRequest();
+      // Update auditorium data
+      const audiData = res.data.audi;
+      setAudi(audiData);
+      
+      // Fetch seat data for this auditorium
+      const audiId = audiData.id;
+      const seatData = await getSeat(audiId);
+      setBookSeats(seatData);
+      
+      // Remove loading state
+      setLoader(false);
+    } catch (error) {
+      console.error("Error fetching auditorium data:", error);
     }
-  }, [buttonClicked, bookedSeats, userId, timeStamp, movieId]);
+  }, [movieId, timeStamp]);
 
   /**
    * Effect to fetch auditorium and seat data when component mounts
    * or when timeStamp/movieId changes
    */
   useEffect(() => {
-    async function getAudi() {
-      try {
-        // Fetch auditorium data based on cinema and time selection
-        const res = await axios.post("/api/booking/slots", {
-          movieId: movieId,
-          timeStamp: timeStamp,
-        });
-        
-        // Update auditorium data
-        setAudi(res.data.audi);
-        setTCols((audi ? audi.cols : 0) + 1);
-        
-        // Fetch seat data for this auditorium
-        const audiId = res.data.audi.id;
-        const seatData = await getSeat(audiId);
-        setBookSeats(seatData);
-        
-        // Remove loading state
-        setLoader(false);
-      } catch (error) {
-        console.error("Error fetching auditorium data:", error);
-      }
+    fetchAuditoriumData();
+  }, [fetchAuditoriumData]);
+
+  /**
+   * Handles seat selection when user clicks on a seat
+   * Memoized to prevent unnecessary function recreations
+   */
+  const handleSeatSelection = useCallback((seat: SeatType) => {
+    if (!seat.booked) {
+      setSelectedSeat(seat);
     }
+  }, []);
+
+  /**
+   * Send booking request to Express server
+   * Memoized to prevent unnecessary function recreations
+   */
+  const sendBookingRequest = useCallback(async () => {
+    if (buttonClicked === 0 || bookedSeats.length === 0) return;
     
-    getAudi();
-  }, [timeStamp, movieId, audi]);
+    setButtonLoader(true);
+    try {
+      const response = await axios.post(
+        process.env.EXPRESS_SERVER_URL || "http://localhost:8080", 
+        {
+          bookedSeats,
+          userId,
+          startTime: timeStamp,
+          cinemaId: movieId,
+        }
+      );
+      
+      console.log("Booking request added to queue:", response.data);
+    } catch (error) {
+      console.error("Error sending booking request:", error);
+    } finally {
+      setButtonLoader(false);
+    }
+  }, [buttonClicked, bookedSeats, userId, timeStamp, movieId]);
 
   /**
    * Effect to update selected seats whenever the user selects a new seat
    * or changes the number of seats
    */
   useEffect(() => {
-    // Use selectTheSeats utility to determine which seats should be selected
-    // based on the starting seat and number of seats requested
-    const bookedSeats = selectTheSeats(audi, selectedSeat, numberOfSeats);
-    setBookedSeats(bookedSeats);
+    const selectedSeats = selectTheSeats(audi, selectedSeat, numberOfSeats);
+    setBookedSeats(selectedSeats);
   }, [selectedSeat, audi, numberOfSeats]);
 
   /**
-   * Placeholder function for seat click handler
-   * Actual seat selection is handled by onClick in the JSX below
+   * Effect for handling payment button clicks
    */
-  function onSeatClick() {}
+  useEffect(() => {
+    sendBookingRequest();
+  }, [sendBookingRequest]);
+
   // Show loading spinner while fetching auditorium data
-  if (loader || !audi) {
+  if (loader || !audi || !bookSeats) {
     return (
       <div className="w-full text-white h-full mt-36 flex justify-center items-center" data-testid="circular-loader">
         <CircularLoader size="10" />
@@ -158,8 +160,14 @@ export default function AuditoriumStructure({ userId }: { userId: number }) {
     );
   }
 
+  // Calculate seat width once for all seats
   const seatWidth = 100 / audi.cols;
 
+  // Pre-calculate row letters for performance
+  const rowLetters: Record<number, string> = {};
+  for (let i = 0; i < audi.rows; i++) {
+    rowLetters[i] = ROW_LETTERS[i] || '#';
+  }
 
   return (
     <div className="flex justify-center flex-col items-center w-full">
@@ -180,51 +188,57 @@ export default function AuditoriumStructure({ userId }: { userId: number }) {
         <Screen data-testid="screen" />
       </div>
 
-      {/* Seat grid/matrix */}
-      <div className="mt-7 flex flex-wrap">
-        {bookSeats?.map((elem, index) => (
-          <div
-            key={index}
-            className="flex flex-row justify-center w-fit h-fit items-center my-2"
-            style={{ width: `${seatWidth.toString()}%` }}
-          >
-            {/* Row labels (A, B, C, etc.) at the beginning of each row */}
-            {index % audi.cols === 0 && (
-              <div className="w-3 text-[8px] md:text-sm text-white/30">
-                {lettr[Math.floor(index / audi.cols)]}
-              </div>
-            )}
-            
-            {/* Seat component with click handler */}
+      {/* Seat grid/matrix - using CSS Grid for better layout performance */}
+      <div 
+        className="mt-7 grid gap-2"
+        style={{ 
+          gridTemplateColumns: `repeat(${audi.cols}, 1fr)`,
+          width: '100%',
+          maxWidth: '800px'
+        }}
+      >
+        {bookSeats.map((seat, index) => {
+          const rowIndex = Math.floor(index / audi.cols);
+          const colIndex = index % audi.cols;
+          const isSelected = bookedSeats.includes(seat.id);
+          
+          return (
             <div
-              className={index % audi.cols === 1 ? "ml-1" : ""}
-              onClick={() => {
-                // Only allow selecting seats that aren't already booked
-                if (!elem.booked) setSelectedSeat(elem);
-              }}
-              data-testid={`seat-container-${elem.id}`}
+              key={seat.id}
+              className="flex items-center justify-center relative"
             >
-              <Seat
-                onClick={onSeatClick}
-                seat={elem}
-                totalCols={audi.cols}
-                isSelected={bookedSeats.includes(elem.id)}
-                data-testid={`seat-${elem.id}`}
-              />
+              {/* Row labels at the beginning of each row */}
+              {colIndex === 0 && (
+                <div className="absolute left-[-15px] text-[8px] md:text-sm text-white/30">
+                  {rowLetters[rowIndex]}
+                </div>
+              )}
+              
+              {/* Seat component */}
+              <div
+                onClick={() => handleSeatSelection(seat)}
+                data-testid={`seat-container-${seat.id}`}
+              >
+                <Seat
+                  onClick={() => {}} // Empty handler as click is managed by parent
+                  seat={seat}
+                  totalCols={audi.cols}
+                  isSelected={isSelected}
+                  data-testid={`seat-${seat.id}`}
+                />
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* Payment button footer - only shown after a seat is selected */}
-      {selectedSeat && (
-        <div className="absolute w-full bottom-0 flex flex-col items-center bg-white/10 py-4">
+      {selectedSeat && bookedSeats.length > 0 && (
+        <div className="fixed w-full bottom-0 flex flex-col items-center bg-white/10 py-4 z-10">
           <PayingAmountButton
             loader={buttonLoader}
-            amount={totalSeatAmount(bookedSeats, audi) / 100} // Convert from cents to currency unit
-            onClick={() => {
-              setButtonClicked((prev) => prev + 1); // Increment to trigger payment effect
-            }}
+            amount={totalSeatAmount(bookedSeats, audi) / 100}
+            onClick={() => setButtonClicked(prev => prev + 1)}
             data-testid="pay-button"
           />
         </div>
@@ -236,9 +250,9 @@ export default function AuditoriumStructure({ userId }: { userId: number }) {
 /**
  * Screen Component
  * Renders the movie screen at the top of the auditorium
- * @returns {JSX.Element} SVG representation of the screen
+ * Memoized to prevent unnecessary re-renders
  */
-function Screen() {
+const Screen = React.memo(() => {
   return (
     <svg
       width="200"
@@ -251,4 +265,4 @@ function Screen() {
       <path d="M521 46L413 0H108L0 46H521Z" fill="white" opacity="0.2" />
     </svg>
   );
-}
+});

@@ -1,5 +1,3 @@
-import Seat from "@/components/Seat";
-
 /**
  * Seat Type Definition
  */
@@ -24,14 +22,20 @@ type AudiType = {
   seats: SeatType[];
 };
 
+// For quick lookup of seats by their row and column coordinates
+type SeatMap = Map<string, SeatType>;
+
 /**
  * Selects seats in the auditorium based on user selection and requested number of seats
  * 
- * This function implements a seat selection algorithm that:  
+ * This function implements an optimized seat selection algorithm that:
  * 1. Starts from the selected seat
- * 2. Adds adjacent seats until the requested number is reached
- * 3. Skips already booked seats
- * 4. Wraps to the next row if needed
+ * 2. Tries to find adjacent seats in the same row first (preferred seating pattern)
+ * 3. Only wraps to nearby rows if necessary
+ * 4. Skips already booked seats
+ * 
+ * Time complexity: O(rows * cols) in worst case but typically O(numberOfSeats)
+ * Space complexity: O(rows * cols) for the seat map
  * 
  * @param audi - Auditorium data with seats configuration
  * @param selectedSeat - The initial seat selected by the user
@@ -44,45 +48,92 @@ export default function selectTheSeats(
   numberOfSeats: number
 ): number[] {
   // Return empty array if we don't have auditorium data or a selected seat
-  if (!audi || !selectedSeat) return [];
-  else {
-    // Get seats array and sort by ID for consistent ordering
-    const seats = [...audi.seats];
-    seats.sort((a: SeatType, b: SeatType) => a.id - b.id);
-    const rows = audi.rows;
-    const cols = audi.cols;
-    let c = selectedSeat.col; // Starting column
-    const bookedSeats: number[] = []; // Array to hold selected seat IDs
-    let noOfSeats = 0; // Counter for number of seats selected
-    let r = selectedSeat.row; // Starting row
+  if (!audi || !selectedSeat || numberOfSeats <= 0) return [];
+  
+  const { rows, cols } = audi;
+  const startRow = selectedSeat.row;
+  const startCol = selectedSeat.col;
+  
+  // Create a seat map for O(1) lookups by row and column
+  const seatMap: SeatMap = new Map();
+  const availableSeats: SeatType[] = [];
+  
+  // Populate the seat map and track available seats
+  for (const seat of audi.seats) {
+    const key = `${seat.row}-${seat.col}`;
+    seatMap.set(key, seat);
     
-    // Iterate through rows and columns starting from the selected seat
-    for (let i = 0; i < rows; i++) {
-      for (let j = 0; j < cols; j++) {
-        // Calculate next row and column with wrap-around
-        let nr = r + i;
-        let nc = c + j;
-        nr = ((nr - 1) % rows) + 1; // Ensure row wraps around (1 to rows)
-        nc = ((nc - 1) % cols) + 1; // Ensure column wraps around (1 to cols)
+    if (!seat.booked) {
+      availableSeats.push(seat);
+    }
+  }
+  
+  // If we don't have enough available seats total, return what we can
+  if (availableSeats.length < numberOfSeats) {
+    return availableSeats.slice(0, numberOfSeats).map(seat => seat.id);
+  }
+  
+  // Try to get seats in the same row first (better user experience)
+  const selectedSeats: SeatType[] = [];
+  
+  // Add the initially selected seat
+  selectedSeats.push(selectedSeat);
+  
+  // Try to find adjacent seats in the same row (to the right)
+  for (let i = 1; i < numberOfSeats; i++) {
+    const nextCol = startCol + i;
+    if (nextCol <= cols) {
+      const key = `${startRow}-${nextCol}`;
+      const seat = seatMap.get(key);
+      
+      if (seat && !seat.booked) {
+        selectedSeats.push(seat);
+      } else {
+        break; // Gap found, try another approach
+      }
+    } else {
+      break; // Reached end of row
+    }
+  }
+  
+  // If we couldn't get all seats in a row to the right, try to the left
+  if (selectedSeats.length < numberOfSeats) {
+    selectedSeats.length = 0; // Reset selection
+    selectedSeats.push(selectedSeat);
+    
+    // Look to the left of the selected seat
+    for (let i = 1; i < numberOfSeats; i++) {
+      const nextCol = startCol - i;
+      if (nextCol >= 1) {
+        const key = `${startRow}-${nextCol}`;
+        const seat = seatMap.get(key);
         
-        // Calculate seat index in the flat array
-        const seatIndex = (nr - 1) * cols + nc - 1;
-        
-        // Add seat if it's not already booked
-        if (seatIndex < seats.length && !seats[seatIndex].booked) {
-          bookedSeats.push(seats[seatIndex].id);
-          noOfSeats++;
-          
-          // Return as soon as we have enough seats
-          if (noOfSeats === numberOfSeats) return bookedSeats;
+        if (seat && !seat.booked) {
+          selectedSeats.push(seat);
+        } else {
+          break;
         }
-        
-        // Move to next row when we reach the end of a column
-        if (nc === cols) r++;
+      } else {
+        break;
       }
     }
-    
-    // If we couldn't find enough available seats
-    return bookedSeats; // Return whatever seats we found
   }
+  
+  // If we still don't have enough seats, use the nearest available seats in adjacent rows
+  if (selectedSeats.length < numberOfSeats) {
+    // Start fresh with a proximity-based approach
+    selectedSeats.length = 0;
+    
+    // Sort available seats by proximity to the selected seat
+    availableSeats.sort((a, b) => {
+      const distA = Math.abs(a.row - startRow) * cols + Math.abs(a.col - startCol);
+      const distB = Math.abs(b.row - startRow) * cols + Math.abs(b.col - startCol);
+      return distA - distB;
+    });
+    
+    // Take the closest available seats
+    return availableSeats.slice(0, numberOfSeats).map(seat => seat.id);
+  }
+  
+  return selectedSeats.map(seat => seat.id);
 }
