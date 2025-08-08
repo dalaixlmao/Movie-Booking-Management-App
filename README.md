@@ -1,6 +1,16 @@
 # Movie Booking App
 
-This is a full-stack movie booking application built using the Turborepo monorepo structure. It allows users to search for available movies, select time slots, book seats, and make payments. The app consists of two services: a Next.js `user-app` and an Express.js-based `queue-app` using Redis messaging queues for handling seat booking transactions.
+This is a full-stack movie booking application built using the Turborepo monorepo structure. It allows users to search for available movies, select time slots, book seats, and make payments. The app consists of three main services: a Next.js `user-app`, an Express.js-based `express-server` for API handling, and a `worker` service using Redis messaging queues for handling seat booking transactions to prevent conflicts.
+
+## Documentation
+
+Comprehensive documentation is available in the [docs.codexhub.ai](./docs.codexhub.ai) directory, including:
+
+- [System Architecture](./docs.codexhub.ai/architecture/system-overview.md)
+- [API Reference](./docs.codexhub.ai/api/user-app-api-reference.md)
+- [Developer Onboarding](./docs.codexhub.ai/guides/developer-onboarding.md)
+- [Database Schema](./docs.codexhub.ai/guides/database-schema.md)
+- [Testing Guide](./docs.codexhub.ai/testing/testing-guide.md)
 
 ## Demo Screenshots
 
