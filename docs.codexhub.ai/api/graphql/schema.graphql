@@ -1,0 +1,291 @@
+"""
+User type representing a registered user in the system
+"""
+type User {
+  id: ID!
+  name: String!
+  email: String!
+  phone: String!
+  city: String
+  state: String
+  zip: String
+  balance: Int!
+  bookings: [Booking!]
+}
+
+"""
+Basic user information for sharing tickets
+"""
+type UserBasic {
+  id: ID!
+  name: String!
+  email: String!
+}
+
+"""
+Authentication response with user information and token
+"""
+type AuthResponse {
+  user: User!
+  token: String!
+  expiresAt: String!
+}
+
+"""
+Movie information available in the system
+"""
+type Movie {
+  id: ID!
+  name: String!
+  languages: [String!]!
+  certificate: String!
+  rating: String!
+  dates: [DateTime!]!
+  poster: String
+  cinemas: [Cinema!]!
+}
+
+"""
+Cinema where movies are shown
+"""
+type Cinema {
+  id: ID!
+  name: String!
+  city: String!
+  state: String!
+  zip: String!
+  auditoriums: [Auditorium!]!
+  movies: [Movie!]!
+}
+
+"""
+Cinema with available time slots
+"""
+type CinemaWithSlots {
+  cinema: Cinema!
+  timeSlots: [DateTime!]!
+}
+
+"""
+Movie auditorium in a cinema
+"""
+type Auditorium {
+  id: ID!
+  name: String!
+  rows: Int!
+  cols: Int!
+  cinema: Cinema!
+  seats: [Seat!]!
+}
+
+"""
+Individual seat in an auditorium
+"""
+type Seat {
+  id: ID!
+  row: Int!
+  col: Int!
+  audiId: ID!
+  booked: Boolean!
+  bookingId: ID
+  price: Int!
+}
+
+"""
+Movie booking information
+"""
+type Booking {
+  id: ID!
+  cinema: Cinema!
+  seats: [Seat!]!
+  startTime: DateTime!
+  userId: ID!
+  user: User!
+  totalAmount: Int!
+  movieDetails: Movie!
+}
+
+"""
+Status of a shared ticket
+"""
+enum SharedTicketStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  EXPIRED
+}
+
+"""
+Ticket shared between users
+"""
+type SharedTicket {
+  id: ID!
+  booking: Booking!
+  seats: [Seat!]!
+  sharedByUserId: ID!
+  sharedByUserName: String!
+  recipientUserId: ID!
+  recipientUserName: String!
+  message: String
+  status: SharedTicketStatus!
+  sharedAt: DateTime!
+  expiresAt: DateTime!
+  respondedAt: DateTime
+}
+
+"""
+Response after sharing a ticket
+"""
+type TicketShareResponse {
+  sharedTicket: SharedTicket!
+  message: String!
+}
+
+"""
+Error information
+"""
+type Error {
+  message: String!
+  code: String
+}
+
+"""
+Custom scalar for DateTime values
+"""
+scalar DateTime
+
+"""
+Input for user sign in
+"""
+input SignInInput {
+  email: String!
+  password: String!
+}
+
+"""
+Input for user sign up
+"""
+input SignUpInput {
+  name: String!
+  email: String!
+  password: String!
+  phone: String!
+  city: String
+  state: String
+  zip: String
+}
+
+"""
+Input for creating a new booking
+"""
+input BookingInput {
+  cinemaId: ID!
+  startTime: DateTime!
+  seatIds: [ID!]!
+}
+
+"""
+Input for sharing a ticket
+"""
+input TicketShareInput {
+  bookingId: ID!
+  recipientUserId: ID!
+  seats: [ID!]!
+  message: String
+}
+
+"""
+Input for searching users
+"""
+input UserSearchInput {
+  query: String!
+}
+
+type Query {
+  """
+  Get the current authenticated user
+  """
+  me: User!
+
+  """
+  Search for users by name or email
+  """
+  searchUsers(input: UserSearchInput!): [UserBasic!]!
+
+  """
+  Get all available movies with optional filtering
+  """
+  movies(city: String, language: String, date: DateTime): [Movie!]!
+
+  """
+  Get a specific movie by ID
+  """
+  movie(id: ID!): Movie
+
+  """
+  Get available cinemas with optional filtering
+  """
+  cinemas(city: String, movieId: ID, date: DateTime): [Cinema!]!
+
+  """
+  Get available time slots for a cinema
+  """
+  cinemaSlots(cinemaId: ID!, movieId: ID!, date: DateTime!): [DateTime!]!
+
+  """
+  Get seat information for an auditorium
+  """
+  auditoriumSeats(cinemaId: ID!, audiId: ID!, timestamp: DateTime!): Auditorium!
+
+  """
+  Get bookings for the current authenticated user
+  """
+  myBookings: [Booking!]!
+
+  """
+  Get a specific booking by ID
+  """
+  booking(id: ID!): Booking
+
+  """
+  Get tickets shared with the current authenticated user
+  """
+  sharedTickets: [SharedTicket!]!
+}
+
+type Mutation {
+  """
+  Sign in to the application
+  """
+  signIn(input: SignInInput!): AuthResponse!
+
+  """
+  Sign up to the application
+  """
+  signUp(input: SignUpInput!): AuthResponse!
+
+  """
+  Sign out from the application
+  """
+  signOut: Boolean!
+
+  """
+  Create a new booking
+  """
+  createBooking(input: BookingInput!): Booking!
+
+  """
+  Share a ticket with another user
+  """
+  shareTicket(input: TicketShareInput!): TicketShareResponse!
+
+  """
+  Accept a shared ticket
+  """
+  acceptSharedTicket(sharedTicketId: ID!): SharedTicket!
+
+  """
+  Decline a shared ticket
+  """
+  declineSharedTicket(sharedTicketId: ID!): Boolean!
+}

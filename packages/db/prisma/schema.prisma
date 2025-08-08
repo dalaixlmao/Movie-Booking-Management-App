@@ -18,6 +18,8 @@ model User {
   zip String?
   bookings Booking[]
   balance Int
+  sharedTicketsSent SharedTicket[] @relation("SentBy")
+  sharedTicketsReceived SharedTicket[] @relation("ReceivedBy")
 }
 
 model Bank{
@@ -44,6 +46,7 @@ model Seat {
   bookingId Int?
   booking Booking? @relation(fields: [bookingId], references: [id])
   price Int @default(0)
+  sharedSeats SharedSeat[]
 }
 
 model Movie {
@@ -80,6 +83,37 @@ model Cinema {
   bookings Booking[]
 }
 
+enum SharedTicketStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  EXPIRED
+}
+
+model SharedTicket {
+  id Int @id @default(autoincrement())
+  bookingId Int
+  booking Booking @relation(fields: [bookingId], references: [id])
+  sharedByUserId Int
+  sharedByUser User @relation("SentBy", fields: [sharedByUserId], references: [id])
+  recipientUserId Int
+  recipientUser User @relation("ReceivedBy", fields: [recipientUserId], references: [id])
+  message String?
+  status SharedTicketStatus @default(PENDING)
+  sharedAt DateTime @default(now())
+  expiresAt DateTime
+  respondedAt DateTime?
+  sharedSeats SharedSeat[]
+}
+
+model SharedSeat {
+  id Int @id @default(autoincrement())
+  sharedTicketId Int
+  sharedTicket SharedTicket @relation(fields: [sharedTicketId], references: [id], onDelete: Cascade)
+  seatId Int
+  seat Seat @relation(fields: [seatId], references: [id])
+}
+
 model Booking{
   id Int @id @default(autoincrement())
   cinemaId Int
@@ -88,4 +122,5 @@ model Booking{
   startTime DateTime
   userId Int
   user User @relation(fields: [userId], references: [id])
+  sharedTickets SharedTicket[]
 }
