@@ -1,0 +1,97 @@
+{
+  "name": "movie-booking-app",
+  "problems": [
+    "missing: @repo/db@file:/tmp/repo/packages/db, required by movie-booking-app@",
+    "missing: @repo/eslint-config@file:/tmp/repo/packages/eslint-config, required by movie-booking-app@",
+    "missing: @repo/store@file:/tmp/repo/packages/store, required by movie-booking-app@",
+    "missing: @repo/typescript-config@file:/tmp/repo/packages/typescript-config, required by movie-booking-app@",
+    "missing: @repo/ui@file:/tmp/repo/packages/ui, required by movie-booking-app@",
+    "missing: axios@^1.7.2, required by movie-booking-app@",
+    "missing: express-server@file:/tmp/repo/apps/express-server, required by movie-booking-app@",
+    "missing: prettier@^3.2.5, required by movie-booking-app@",
+    "missing: turbo@^2.0.6, required by movie-booking-app@",
+    "missing: typescript@^5.4.5, required by movie-booking-app@",
+    "missing: user-app@file:/tmp/repo/apps/user-app, required by movie-booking-app@",
+    "missing: worker@file:/tmp/repo/apps/worker, required by movie-booking-app@"
+  ],
+  "dependencies": {
+    "@repo/db": {
+      "required": "file:/tmp/repo/packages/db",
+      "missing": true,
+      "problems": [
+        "missing: @repo/db@file:/tmp/repo/packages/db, required by movie-booking-app@"
+      ]
+    },
+    "@repo/eslint-config": {
+      "missing": true,
+      "problems": [
+        "missing: @repo/eslint-config@file:/tmp/repo/packages/eslint-config, required by movie-booking-app@"
+      ]
+    },
+    "@repo/store": {
+      "missing": true,
+      "problems": [
+        "missing: @repo/store@file:/tmp/repo/packages/store, required by movie-booking-app@"
+      ]
+    },
+    "@repo/typescript-config": {
+      "missing": true,
+      "problems": [
+        "missing: @repo/typescript-config@file:/tmp/repo/packages/typescript-config, required by movie-booking-app@"
+      ]
+    },
+    "@repo/ui": {
+      "missing": true,
+      "problems": [
+        "missing: @repo/ui@file:/tmp/repo/packages/ui, required by movie-booking-app@"
+      ]
+    },
+    "axios": {
+      "missing": true,
+      "problems": [
+        "missing: axios@^1.7.2, required by movie-booking-app@"
+      ]
+    },
+    "express-server": {
+      "missing": true,
+      "problems": [
+        "missing: express-server@file:/tmp/repo/apps/express-server, required by movie-booking-app@"
+      ]
+    },
+    "prettier": {
+      "missing": true,
+      "problems": [
+        "missing: prettier@^3.2.5, required by movie-booking-app@"
+      ]
+    },
+    "turbo": {
+      "missing": true,
+      "problems": [
+        "missing: turbo@^2.0.6, required by movie-booking-app@"
+      ]
+    },
+    "typescript": {
+      "missing": true,
+      "problems": [
+        "missing: typescript@^5.4.5, required by movie-booking-app@"
+      ]
+    },
+    "user-app": {
+      "missing": true,
+      "problems": [
+        "missing: user-app@file:/tmp/repo/apps/user-app, required by movie-booking-app@"
+      ]
+    },
+    "worker": {
+      "missing": true,
+      "problems": [
+        "missing: worker@file:/tmp/repo/apps/worker, required by movie-booking-app@"
+      ]
+    }
+  },
+  "error": {
+    "code": "ELSPROBLEMS",
+    "summary": "missing: @repo/db@file:/tmp/repo/packages/db, required by movie-booking-app@\nmissing: @repo/eslint-config@file:/tmp/repo/packages/eslint-config, required by movie-booking-app@\nmissing: @repo/store@file:/tmp/repo/packages/store, required by movie-booking-app@\nmissing: @repo/typescript-config@file:/tmp/repo/packages/typescript-config, required by movie-booking-app@\nmissing: @repo/ui@file:/tmp/repo/packages/ui, required by movie-booking-app@\nmissing: axios@^1.7.2, required by movie-booking-app@\nmissing: express-server@file:/tmp/repo/apps/express-server, required by movie-booking-app@\nmissing: prettier@^3.2.5, required by movie-booking-app@\nmissing: turbo@^2.0.6, required by movie-booking-app@\nmissing: typescript@^5.4.5, required by movie-booking-app@\nmissing: user-app@file:/tmp/repo/apps/user-app, required by movie-booking-app@\nmissing: worker@file:/tmp/repo/apps/worker, required by movie-booking-app@",
+    "detail": ""
+  }
+}
