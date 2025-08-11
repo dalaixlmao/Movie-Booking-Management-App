@@ -8,6 +8,8 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "devDependencies": {
+    "@next/bundle-analyzer": "^15.4.6",
+    "lighthouse": "^12.8.1",
     "prettier": "^3.2.5",
     "turbo": "^2.0.6",
     "typescript": "^5.4.5"
