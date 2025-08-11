@@ -1,10 +1,12 @@
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "postgresqlExtensions"]
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  extensions = ["pg_trgm"]
 }
 
 model User {
@@ -17,12 +19,19 @@ model User {
   state String?
   zip String?
   bookings Booking[]
-  balance Int
+  balance Int @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  transactions Transaction[]
+  role String @default("user")
+
+  @@index([email])
 }
 
 model Bank{
   id Int @id @default(autoincrement())
   balance Int @default(10000000)
+  updatedAt DateTime @updatedAt
 }
 
 model Slots{
@@ -30,8 +39,15 @@ model Slots{
   movieId Int
   slots DateTime[]
   audiId Int
-  movie Movie @relation(fields: [movieId], references: [id])
-  audi Audi @relation (fields: [audiId], references: [id])
+  movie Movie @relation(fields: [movieId], references: [id], onDelete: Cascade)
+  audi Audi @relation (fields: [audiId], references: [id], onDelete: Cascade)
+  available Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([movieId])
+  @@index([audiId])
+  @@index([movieId, audiId])
 }
 
 model Seat {
@@ -39,11 +55,16 @@ model Seat {
   row Int
   col Int
   audiId Int
-  audi Audi @relation(fields: [audiId], references: [id])
+  audi Audi @relation(fields: [audiId], references: [id], onDelete: Cascade)
   booked Boolean @default(false)
   bookingId Int?
-  booking Booking? @relation(fields: [bookingId], references: [id])
+  booking Booking? @relation(fields: [bookingId], references: [id], onDelete: SetNull)
   price Int @default(0)
+  seatType String @default("standard") // standard, premium, vip, etc.
+
+  @@unique([row, col, audiId])
+  @@index([audiId, booked])
+  @@index([bookingId])
 }
 
 model Movie {
@@ -56,6 +77,15 @@ model Movie {
   cinemas Cinema[]
   poster String?
   slots Slots[]
+  description String? @db.Text
+  duration Int? // duration in minutes
+  genre String[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  isActive Boolean @default(true)
+
+  @@index([name])
+  @@index([isActive])
 }
 
 model Audi {
@@ -65,8 +95,14 @@ model Audi {
   name String
   seats Seat[]
   cinemaId Int
-  cinema Cinema @relation(fields: [cinemaId], references: [id])
+  cinema Cinema @relation(fields: [cinemaId], references: [id], onDelete: Cascade)
   slots Slots[]
+  capacity Int @default(0)
+  audiType String @default("standard") // standard, imax, 3d, etc.
+  isActive Boolean @default(true)
+
+  @@index([cinemaId])
+  @@index([isActive])
 }
 
 model Cinema {
@@ -78,6 +114,15 @@ model Cinema {
   state String
   zip String
   bookings Booking[]
+  address String?
+  phoneNumber String?
+  email String?
+  isActive Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([city])
+  @@index([isActive])
 }
 
 model Booking{
@@ -88,4 +133,14 @@ model Booking{
   startTime DateTime
   userId Int
   user User @relation(fields: [userId], references: [id])
+  status String @default("confirmed") // confirmed, cancelled, refunded
+  totalAmount Int @default(0)
+  transactionId String?
+  transactions Transaction[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId, startTime])
+  @@index([cinemaId, startTime])
+  @@index([status])
 }
